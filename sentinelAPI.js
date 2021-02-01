@@ -17,13 +17,21 @@ const config = {
     }
 };
 
-let getScript = (dataProcessing) => {
+let loadScript = async (dataProcessing, callback) => {
+
+    let url;
 
     if (dataProcessing == 'CO') {
-        return require('./scripts/CO');
-    }
+        url = './scripts/CO.js';
+    };
 
-}
+    await axios.get(url).then(response => {
+        callback(null, response.data);
+    }).catch(error => {
+        callback(error, null);
+    });
+
+};
 
 // ----------------------------------------------------------------------------------------------------------
 // Requesting tokens
@@ -87,42 +95,47 @@ let runProcess = (clientID, clientSecret, dataProcessing, callback) => {
                     }
                 }
             ]
+        },
+        "output": {
+            "width": 512,
+            "height": 512
         }
     };
 
-    log('info', JSON.stringify(request))
+    log('info', JSON.stringify(request));
 
-    var output = {
-        "width": 512,
-        "height": 512
-    };
+    loadScript(dataProcessing, (err, script) => {
 
-    log('info', JSON.stringify(output))
-
-    const body = qs.stringify({
-        request: request,
-        output: output,
-        evalscript: getScript(dataProcessing)
-    });
-
-    log('info', JSON.stringify(body))
-
-    getToken(clientID, clientSecret, (err, token) => {
-      
         if (err != null) {
-        callback(err, null);
-      } else {
 
-        Object.assign(instance.defaults, { headers: { authorization: `Bearer ${token}` } });
+            const body = qs.stringify({
+                request: request,
+                evalscript: script
+            });
 
-        instance.post('/process', body, config).then(response => {
-            console.log(response);
-            callback(null, response.data);
-        }).catch(error => {
-            callback(error, null)
-        });
-      }
+            log('info', JSON.stringify(body));
+
+            getToken(clientID, clientSecret, (err, token) => {
       
+                if (err != null) {
+                    callback(err, null);
+                } else {
+        
+                    Object.assign(instance.defaults, { headers: { authorization: `Bearer ${token}` } });
+            
+                    instance.post('/process', body, config).then(response => {
+                        console.log(response);
+                        callback(null, response.data);
+                    }).catch(error => {
+                        callback(error, null)
+                    });
+                }
+            });
+
+        } else {
+            callback(error, null)
+        }
+
     });
   
 }
