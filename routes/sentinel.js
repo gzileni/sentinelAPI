@@ -41,8 +41,10 @@ router.post('/process', (req, res, next) => {
   
   sentinelAPI.runProcess(clientID, clientSecret, dataprocess, (err, response) => {
     if (err != null) {
+      log('error', 'ERROR /process \n' + JSON.stringify(err))
       res.status(400).send(err);
     } else {
+      log('success', 'OK API /process \n' + JSON.stringify(response))
       res.status(200).jsonp(response);
     }
   });
