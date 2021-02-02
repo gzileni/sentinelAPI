@@ -31,9 +31,11 @@ async function getToken (clientID, clientSecret, callback) {
       client_secret,
       grant_type: "client_credentials"
     });
+
+    // log('info', 'Request TOKEN by ' + JSON.stringify(body))
   
     await instance.post("/oauth/token", body, config).then((resp) => {
-        log('info', 'get tokek OK \n' + resp.data.access_token);
+        log('info', 'get token OK.');
         callback(null, resp.data.access_token);
     }).catch((err) => {
         log('error', 'Error TOKEN -> ' + JSON.stringify(err))
@@ -52,23 +54,25 @@ async function getRateLimit (instance_id, callback) {
     })
 };
 
-let _getDataProcess = async (form, token, callback) => {
+let _getDataProcess = async (body, token, callback) => {
     
+    log('info', 'stating data process ... ');
+
     const instance = axios.create({
         baseURL: 'https://creodias.sentinel-hub.com/api/v1'
     });
 
     instance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    // instance.defaults.headers.post['Content-Type'] = 'application/json';
-    // instance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
-
-    await instance.post('/process', form).then(response => {
+    instance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+    
+    await instance.post('/process', body).then(response => {
         log('success', 'OK -> ' + JSON.stringify(response));
         callback(null, response.data);
     }).catch(error => {
         log('error', 'Error GET Image -> ' + JSON.stringify(error));
         callback(error, null)
     });
+    
 }
 
 
@@ -82,9 +86,9 @@ let runProcess = async (clientID, clientSecret, dataProcessing, callback) => {
             callback(err, null);
         } else {
 
-            axios.post('http://localhost:3000/api/v1/dataprocess/' + dataProcessing).then(response => {
+            axios.get('http://localhost:3000/api/v1/process/' + dataProcessing).then(response => {
 
-                log('info', 'SCRIPT RECEVING ... ' + response.data);
+                log('info', 'SCRIPT RECEVING ... OK ');
 
                 const request = { 
                     "input": {
@@ -104,8 +108,8 @@ let runProcess = async (clientID, clientSecret, dataProcessing, callback) => {
                                 "type": "S5PL2",
                                 "dataFilter": {
                                     "timeRange": {
-                                        "from": "2018-12-28T00:00:00Z",
-                                        "to": "2018-12-31T00:00:00Z"
+                                        "from": "2020-12-01T00:00:00Z",
+                                        "to": "2020-12-31T00:00:00Z"
                                     }
                                 }
                             }
@@ -115,15 +119,22 @@ let runProcess = async (clientID, clientSecret, dataProcessing, callback) => {
                         "width": 512,
                         "height": 512
                     }
-                }
+                };
 
-                log('info', 'Data: ' + JSON.stringify(request));
-
+                /*
                 const form = new FormData();
                 form.append('request', request);
                 form.append('evalscript', response.data);
+                */
 
-                _getDataProcess(form, token, callback);
+                var data = {
+                    request: request,
+                    evalscript: response.data
+                };
+
+                log('info', '\n ---- Data ---- \n' + JSON.stringify(data));
+
+                _getDataProcess(data, token, callback);
                 
             }).catch(error => {
                 log('error', 'ERROR RUN PROCESS ... ' + JSON.stringify(error))

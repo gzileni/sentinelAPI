@@ -33,13 +33,11 @@ router.get('/ratelimit/:instance_id', (req, res, next) => {
 
 });
 
-router.post('/process', (req, res, next) => {
+router.post('/data', (req, res, next) => {
 
-  const dataprocess = req.body.dataprocess;
-  const clientID = req.body.clientID;
-  const clientSecret = req.body.clientSecret;
-  
-  sentinelAPI.runProcess(clientID, clientSecret, dataprocess, (err, response) => {
+  const data = req.body.data;
+
+  sentinelAPI.runProcess(req.body.clientID, req.body.clientSecret, data, (err, response) => {
     if (err != null) {
       log('error', 'ERROR /process \n' + JSON.stringify(err))
       res.status(400).send(err);

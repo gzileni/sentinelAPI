@@ -5,7 +5,7 @@ const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
 const sentinelRouter_v1 = require('./routes/sentinel');
-const dataprocessRouter_v1 = require('./routes/dataprocess');
+const dataprocessRouter_v1 = require('./routes/process');
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -20,6 +20,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/api/v1/sentinel', sentinelRouter_v1);
-app.use('/api/v1/dataprocess', dataprocessRouter_v1);
+app.use('/api/v1/process', dataprocessRouter_v1);
 
 module.exports = app;

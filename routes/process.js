@@ -5,16 +5,16 @@ const path = require('path');
 var log = require('logbootstrap');
 
 /* GET home page. */
-router.get('/:dataprocess', (req, res, next) => {
+router.get('/:data', (req, res, next) => {
   
-  const dataprocess = req.params.dataprocess;
+  const data = req.params.data;
   let script_name;
 
-  if (dataprocess == 'CO') {
+  if (data == 'CO') {
     script_name = 'CO.js';
-  } else if (dataprocess == 'NO22') {
+  } else if (data == 'NO22') {
     script_name = 'NO2_luongo.js';
-  } else if (dataprocess == 'NO2') {
+  } else if (data == 'NO2') {
     script_name = 'NO2.js';
   };
 
