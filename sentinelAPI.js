@@ -6,6 +6,7 @@ var qs = require('qs');
 
 const FormData = require('form-data');
 const fetch = require('node-fetch');
+const fs = require('file-system');
 
 var dotenv = require('dotenv');
 dotenv.config();
@@ -86,10 +87,19 @@ let _getDataProcess = async (body, token, callback) => {
 */
 
 
-// -------------------------------------------------------------------
+function _getResponseText(res) {
+    
+    if (res.ok) { // res.status >= 200 && res.status < 300
+        return res.text();
+    } else {
+        return res.statusText;
+    }
+
+};
+
 let runProcess = (clientID, clientSecret, dataProcessing, callback) => {
 
-    fetch("https://localhost:3000/api/v1/sentinel/auth", {
+    fetch("http://localhost:3000/api/v1/sentinel/auth", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -98,13 +108,85 @@ let runProcess = (clientID, clientSecret, dataProcessing, callback) => {
             "clientID": clientID, 
             "clientSecret": clientSecret
         })
-    }).then(response => {
+    }).then(_getResponseText).then(token => {
+        
+        console.log('TOKEN: ' + JSON.stringify(token));
 
-        log('success', 'OK GET TOKEN ... ' + JSON.stringify(response));
+        fetch("http://localhost:3000/api/v1/process/" + dataProcessing).then(_getResponseText).then(script => {
+            log('success', 'SCRIPT: ' + script);
 
-        fetch("http://localhost:3000/api/v1/process/" + dataProcessing).then(script_response => {
-            log('success', 'OK GET SCRIPT ... ' + JSON.stringify(script_response));
+            fetch("https://services.sentinel-hub.com/api/v1/process", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({
+                "input": {
+                    "bounds": {
+                    "bbox": [
+                        13.822174072265625,
+                        45.85080395917834,
+                        14.55963134765625,
+                        46.29191774991382
+                    ]
+                    },
+                    "data": [{
+                        "type": "S5PL2",
+                        "dataFilter": {
+                            "timeRange": {
+                                "from": "2020-12-01T00:00:00Z",
+                                "to": "2020-12-31T00:00:00Z"
+                            }
+                        }
+                    }]
+                },
+                "evalscript": script
+                })
+
+            }).then(res => {
+                log('success', JSON.stringify(res));
+                const dest = fs.createWriteStream('./temp/image.jpg');
+                res.body.pipe(dest);
+            }).catch(error => {
+                log('error', 'ERROR GET IMAGE ... ' + JSON.stringify(error))
+                callback(error, null);
+            })
+        }).catch(error => {
+            log('error', 'ERROR GET SCRIPT ... ' + JSON.stringify(error))
+            callback(error, null);
+        })
+    }).catch(error => {
+        log('error', 'ERROR GET TOKEN ... ' + JSON.stringify(error))
+        callback(error, null);
+    });
+
+
+}
+
+// -------------------------------------------------------------------
+/*
+let runProcess = (clientID, clientSecret, dataProcessing, callback) => {
+
+    fetch("http://localhost:3000/api/v1/sentinel/auth", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "clientID": clientID, 
+            "clientSecret": clientSecret
+        })
+    }).then(token_response => {
+
+        log('success', 'OK GET TOKEN ... ' + JSON.stringify(token_response);
+
+        fetch("http://localhost:3000/api/v1/process/" + dataProcessing, {
+            method: "GET"
+        }).then(script_response => {
             
+            log('success', 'OK GET SCRIPT ... ' + JSON.stringify(script_response));
+
             fetch("https://services.sentinel-hub.com/api/v1/process", {
                 method: "POST",
                 headers: {
@@ -133,9 +215,10 @@ let runProcess = (clientID, clientSecret, dataProcessing, callback) => {
                 },
                 "evalscript": response.data
                 })
+
             }).then(batch_response => {
-                log('success', 'OK RUN PROCESS ... ' + JSON.stringify(batch_response))
-                callback(null, batch_response);
+                log('success', 'OK RUN PROCESS ... ' + JSON.stringify(batch_response.json()))
+                callback(null, batch_response.text());
             }).catch(error => {
                 log('error', 'ERROR RUN PROCESS ... ' + JSON.stringify(error))
                 callback(error, null);
@@ -224,7 +307,8 @@ let runProcess = (clientID, clientSecret, dataProcessing, callback) => {
         }
     });
     */
-};
+// };
+
 
 module.exports = {
     getToken,
