@@ -33,7 +33,7 @@ router.get('/ratelimit/:instance_id', (req, res, next) => {
 
 });
 
-router.post('/data', (req, res, next) => {
+router.post('/process', (req, res, next) => {
 
   const data = req.body.data;
 
