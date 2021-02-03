@@ -102,41 +102,51 @@ let runProcess = (clientID, clientSecret, dataProcessing, callback) => {
 
         log('success', 'OK GET TOKEN ... ' + JSON.stringify(response));
 
-        fetch("https://services.sentinel-hub.com/api/v1/process", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + response
-            },
-            body: JSON.stringify({
-            "input": {
-                "bounds": {
-                "bbox": [
-                    13.822174072265625,
-                    45.85080395917834,
-                    14.55963134765625,
-                    46.29191774991382
-                ]
+        fetch("http://localhost:3000/api/v1/process/" + dataProcessing).then(script_response => {
+            log('success', 'OK GET SCRIPT ... ' + JSON.stringify(script_response));
+            
+            fetch("https://services.sentinel-hub.com/api/v1/process", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + response
                 },
-                "data": [{
-                    "type": "S5PL2",
-                    "dataFilter": {
-                        "timeRange": {
-                            "from": "2020-12-01T00:00:00Z",
-                            "to": "2020-12-31T00:00:00Z"
+                body: JSON.stringify({
+                "input": {
+                    "bounds": {
+                    "bbox": [
+                        13.822174072265625,
+                        45.85080395917834,
+                        14.55963134765625,
+                        46.29191774991382
+                    ]
+                    },
+                    "data": [{
+                        "type": "S5PL2",
+                        "dataFilter": {
+                            "timeRange": {
+                                "from": "2020-12-01T00:00:00Z",
+                                "to": "2020-12-31T00:00:00Z"
+                            }
                         }
-                    }
-                }]
-            },
-            "evalscript": response.data
-            })
-        }).then(batch_response => {
-            log('success', 'OK RUN PROCESS ... ' + JSON.stringify(batch_response))
-            callback(null, batch_response);
+                    }]
+                },
+                "evalscript": response.data
+                })
+            }).then(batch_response => {
+                log('success', 'OK RUN PROCESS ... ' + JSON.stringify(batch_response))
+                callback(null, batch_response);
+            }).catch(error => {
+                log('error', 'ERROR RUN PROCESS ... ' + JSON.stringify(error))
+                callback(error, null);
+            });
+
         }).catch(error => {
-            log('error', 'ERROR RUN PROCESS ... ' + JSON.stringify(error))
+            log('error', 'ERROR GET SCRIPT ... ' + JSON.stringify(error))
             callback(error, null);
         });
+
+        
     }).catch(error => {
         log('error', 'ERROR GET TOKEN ... ' + JSON.stringify(error))
         callback(error, null);
