@@ -37,13 +37,15 @@ router.post('/process', (req, res, next) => {
 
   const data = req.body.data;
 
-  sentinelAPI.runProcess(req.body.clientID, req.body.clientSecret, data, (err, response) => {
+  sentinelAPI.runProcess(req.body.clientID, req.body.clientSecret, data, (err, image) => {
     if (err != null) {
       log('error', 'ERROR /process \n' + JSON.stringify(err))
       res.status(400).send(err);
     } else {
-      log('success', 'OK API /process \n' + JSON.stringify(response))
-      res.status(200).jsonp(response);
+      //res.writeHead(200, { 'Content-Type': 'image/png' });
+      //res.status(200).send(image);
+      res.contentType('image/png');
+      res.end(data);
     }
   });
 

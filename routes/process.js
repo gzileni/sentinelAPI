@@ -10,13 +10,13 @@ router.get('/:data', (req, res, next) => {
   const data = req.params.data;
   let script_name;
 
-  if (data == 'CO') {
-    script_name = 'CO.js';
-  } else if (data == 'NO22') {
-    script_name = 'NO2_luongo.js';
-  } else if (data == 'NO2') {
-    script_name = 'NO2.js';
-  };
+  switch (data) {
+    case "NO2":
+      script_name = 'NO2.js';
+      break;
+    default:
+      script_name = 'CO.js';
+  }
 
   const options = {
     root: path.join(__dirname, 'scripts'),
