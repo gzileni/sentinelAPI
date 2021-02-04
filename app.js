@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+let cors = require('cors');
 
 const indexRouter = require('./routes/index');
 const sentinelRouter_v1 = require('./routes/sentinel');
@@ -11,6 +12,8 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 var app = express();
+
+app.use(cors());
 
 app.use(logger('dev'));
 app.use(express.json());

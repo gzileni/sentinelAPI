@@ -16,7 +16,7 @@ router.get('/:data', (req, res, next) => {
       break;
     default:
       script_name = 'CO.js';
-  }
+  };
 
   const options = {
     root: path.join(__dirname, 'scripts'),

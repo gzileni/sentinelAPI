@@ -19,7 +19,7 @@ const rainbowColors = [
     [maxVal, [0.5, 0, 0]]
 ]
 const viz = new ColorRampVisualizer(rainbowColors)
-s
+
 function evaluatePixel(sample) {
     var rgba= viz.process(sample.CO)
     rgba.push(sample.dataMask)

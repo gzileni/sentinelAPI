@@ -45,7 +45,7 @@ router.post('/process', (req, res, next) => {
       //res.writeHead(200, { 'Content-Type': 'image/png' });
       //res.status(200).send(image);
       res.contentType('image/png');
-      res.end(data);
+      res.end(image);
     }
   });
 
