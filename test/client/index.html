@@ -102,7 +102,7 @@
             };
 
             axios.interceptors.response.use(response => {
-              console.log(response)
+              console.log(response.data)
               var bytes = new Uint8Array(response.data);
               var binary = bytes.reduce((data, b) => data += String.fromCharCode(b), '');
               return "data:image/png;base64," + btoa(binary);
