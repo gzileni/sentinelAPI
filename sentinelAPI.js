@@ -9,6 +9,8 @@ const FormData = require('form-data');
 const fetch = require('node-fetch');
 const fs = require('file-system');
 
+const path = require('path');
+
 var dotenv = require('dotenv');
 dotenv.config();
 
@@ -67,7 +69,56 @@ function _getResponseText(res) {
 
 };
 
-let runProcess = (clientID, clientSecret, dataProcessing, callback) => {
+let _stream_script = (data, callback) => {
+
+    fetch("http://localhost:3000/api/v1/process/" + data).then(_getResponseText).then(script => { 
+        log('success', 'OK Script.');
+        callback(null, script)
+    }).catch(error => {
+        log('error', 'ERROR GET SCRIPT ... ' + JSON.stringify(error))
+        callback(error, null);
+    });
+    
+};
+
+let _getRequest = () => {
+
+    var request = {
+        input: { 
+            bounds: {
+                properties: {
+                    crs: "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+                },
+                bbox: [
+                    13,
+                    45,
+                    15,
+                    47
+                ]
+            },
+            data: [
+                {
+                    type: "S5PL2",
+                    dataFilter: {
+                        timeRange: {
+                            from: "2020-12-28T00:00:00Z",
+                            to: "2020-12-31T00:00:00Z"
+                        }
+                    }
+                }
+            ]
+        },
+        output: {
+            width: 512,
+            height: 512
+        }
+    };
+
+    return JSON.stringify(request);
+
+}
+
+let runProcess = (clientID, clientSecret, data, callback) => {
 
     fetch("http://localhost:3000/api/v1/sentinel/auth", {
         method: "POST",
@@ -82,74 +133,76 @@ let runProcess = (clientID, clientSecret, dataProcessing, callback) => {
         
         console.log('TOKEN: ' + JSON.stringify(token));
 
-        _getImage(token, callback);
+        let stream = _stream_script(data, (err, script) => {
+            log('info', 'SCRIPT \n' + JSON.stringify(script));
 
-        /*
+            let request = _getRequest();
+            log('info', 'REQUEST \n' + request);
 
-        fetch("http://localhost:3000/api/v1/process/" + dataProcessing).then(_getResponseText).then(script => {
-            
-            log('success', 'SCRIPT: ' + script);
+            // fetch("http://localhost:3000/api/v1/process/" + data).then(_getResponseText).then(script => {     
+                
+            const body = new FormData;
+            body.append('request', request);
+            body.append("evalscript", script);
 
-            var request = {
-                input: { 
-                    bounds: {
-                        properties: {
-                            crs: "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
-                        },
-                        bbox: [
-                            13,
-                            45,
-                            15,
-                            47
-                        ]
-                    },
-                    data: [
-                        {
-                            type: "S5PL2",
-                            dataFilter: {
-                                timeRange: {
-                                    from: "2020-12-28T00:00:00Z",
-                                    to: "2020-12-31T00:00:00Z"
-                                }
-                            }
-                        }
-                    ]
-                },
-                output: {
-                    width: 512,
-                    height: 512
-                }
+            var headers = {
+                "Authorization": "Bearer " + token,
+                'Content-Type': `multipart/form-data; boundary=${body._boundary}`,
+                "Accept-Encoding": "gzip, deflate, br",
+                "Accept": "*/*",
+                "Connection": "keep-alive"
             };
 
-            console.log(JSON.stringify(request));
+            var config = {
+                method: 'post',
+                url: 'https://creodias.sentinel-hub.com/api/v1/process',
+                headers: headers,
+                data : body
+            };
 
-            const body = new FormData;
-            body.append('request', JSON.stringify(request));
-            // body.append("evalscript", script);
-            body.append('evalscript', "//VERSION=3\nfunction setup() {\n  return {\n    input: [\"CO\", \"dataMask\"],\n    output: { bands:  4 }\n  }\n}\n\nconst minVal = 0.0\nconst maxVal = 0.1\nconst diff = maxVal - minVal\n\nconst rainbowColors = [\n    [minVal, [0, 0, 0.5]],\n    [minVal + 0.125 * diff, [0, 0, 1]],\n    [minVal + 0.375 * diff, [0, 1, 1]],\n    [minVal + 0.625 * diff, [1, 1, 0]],\n    [minVal + 0.875 * diff, [1, 0, 0]],\n    [maxVal, [0.5, 0, 0]]\n]\n\nconst viz = new ColorRampVisualizer(rainbowColors)\n\nfunction evaluatePixel(sample) {\n    var rgba= viz.process(sample.CO)\n    rgba.push(sample.dataMask)\n    return rgba\n}");
-
-            fetch("https://creodias.sentinel-hub.com/api/v1/process", {
-                method: "POST",
-                headers: {
-                    "Authorization": "Bearer " + token,
-                    "Content-Type": "multipart/form-data",
-                    "Accept-Encoding": "gzip, deflate, br",
-                    "Connection": "keep-alive"
-                },
-                body: body,
-                redirect: 'follow'
-            }).then(image => image.blob()).then(image => {
-                callback(null, image);
-            }).catch(error => {
-                log('error', 'ERROR GET IMAGE ... ' + JSON.stringify(error))
-                callback(error, null);
+            axios.interceptors.response.use(response => {
+                // let data = selected[0].image2.data;
+                return response.toString('base64');
+            }, error => {
+                return Promise.reject(error);
             });
 
+            axios(config).then(response => {
+                log('success', JSON.stringify(response));
+            }).catch(error => {
+                log('error', error.response.status);
+            });
+
+        })
+        
+        
+        
+        /*
+        fetch("https://creodias.sentinel-hub.com/api/v1/process", {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer " + token,
+                "Content-Type": "multipart/form-data",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Connection": "keep-alive"
+            },
+            body: body,
+            redirect: 'follow'
+        }).then(image => image.blob()).then(image => {
+            callback(null, image);
+        }).catch(error => {
+            log('error', 'ERROR GET IMAGE ... ' + JSON.stringify(error))
+            callback(error, null);
+        });
+        */
+        
+        /*
         }).catch(error => {
             log('error', 'ERROR GET SCRIPT ... ' + JSON.stringify(error))
             callback(error, null);
         });
         */
+    
 
     }).catch(error => {
         log('error', 'ERROR GET TOKEN ... ' + JSON.stringify(error))
@@ -158,6 +211,7 @@ let runProcess = (clientID, clientSecret, dataProcessing, callback) => {
 
 }
 
+/*
 let _getImage = (token, callback) => {
 
     var formdata = new FormData();
@@ -171,8 +225,7 @@ let _getImage = (token, callback) => {
             "Content-Type": "multipart/form-data",
             "Accept-Encoding": "gzip, deflate, br",
             "Connection": "keep-alive",
-            "Accept": "*/*"
-        },
+       },
         body: formdata,
         redirect: 'follow'
     };
@@ -186,6 +239,7 @@ let _getImage = (token, callback) => {
     });
 
 }
+*/
 
 module.exports = {
     getToken,

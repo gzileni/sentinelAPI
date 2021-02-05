@@ -1,4 +1,4 @@
-`//VERSION=3
+//VERSION=3
 var values = [ 2.5*1e-5, 5*1e-5, 7.5*1e-5, 1*1e-4,  2.5*1e-4, 5*1e-4]; //value of NO2 in mol/m2
 
 return colorBlend(NO2, values,
@@ -11,4 +11,3 @@ return colorBlend(NO2, values,
     [219/255,  58/255,  76/255]  //  -> 5.0*1e-4 = #DB3A4C
    ]
   );
-`

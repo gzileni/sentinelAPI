@@ -2,24 +2,26 @@ var express = require('express');
 var router = express.Router();
 const path = require('path');
 
+const fs = require('fs');
+
 var log = require('logbootstrap');
 
 /* GET home page. */
 router.get('/:data', (req, res, next) => {
   
   const data = req.params.data;
-  let script_name;
+  let script;
 
   switch (data) {
     case "NO2":
-      script_name = 'NO2.js';
+      script = 'NO2.js';
       break;
     default:
-      script_name = 'CO.js';
+      script = 'CO.js';
   };
 
   const options = {
-    root: path.join(__dirname, 'scripts'),
+    root: path.join(__dirname, '../evalscripts'),
     dotfiles: 'deny',
     headers: {
       'x-timestamp': Date.now(),
@@ -28,14 +30,15 @@ router.get('/:data', (req, res, next) => {
   };
 
   res.setHeader('Content-Type', 'application/javascript');
-  res.sendFile(script_name, options, err => {
+  res.sendFile(script, options, err => {
     if (err) {
-      log('error', 'script ' + script_name + ' error.')
+      log('error', 'script ' + script + ' error.')
       next(err)
     } else {
-      log('info', 'script ' + script_name + ' sended.')
+      log('success', 'script ' + script + ' sended.')
     }
   });
+  
 
 });
 

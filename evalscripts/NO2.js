@@ -1,4 +1,4 @@
-`//VERSION=3
+//VERSION=3
 //S5P Nitrogen Dioxide (NO2)
 
 var val = NO2;
@@ -11,4 +11,3 @@ var colors = [[0, 0, 0.5], [0, 0, 1], [0, 1, 1], [1, 1, 0], [1, 0, 0], [0.5, 0, 
 var ret = colorBlend(val, limits, colors);
 ret.push(dataMask);
 return ret;
-`
