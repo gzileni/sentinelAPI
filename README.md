@@ -14,10 +14,16 @@ yarn install
 cd sentinelAPI
 nano .env    
 ```
+by [SENTINEL HUB DASHBOARD](https://services.sentinel-hub.com/)
 
-CLIENT_ID       =   <YOUR CLIENT ID>
-CLIENT_SECRET   =   <YOUR CLIENT SECRET>
-INSTANCE_ID     =   <YOUR INSTANCE ID>
+![dashboard1](./docs/img/dashboard1.png)
+
+- INSTANCE_ID     =   <YOUR INSTANCE ID>
+
+![dashboard2](./docs/img/dashboard2.png)
+
+- CLIENT_ID       =   <YOUR CLIENT ID>
+- CLIENT_SECRET   =   <YOUR CLIENT SECRET>
 
 ## RUN
 ```
