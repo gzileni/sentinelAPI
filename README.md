@@ -1,5 +1,40 @@
 
+# SENTINEL5P API
+[Sentinel-5P by ESA](http://www.tropomi.eu/data-products/level-2-products) Measuring Air Pollution from Space.
+
+## INSTALLATION
+```
+git clone https://github.com/gzileni/sentinelAPI.git
+cd sentinelAPI
+yarn install
+```
+
+### CREATE .ENV FILE
+```
+cd sentinelAPI
+nano .env    
+```
+
+CLIENT_ID       =   <YOUR CLIENT ID>
+CLIENT_SECRET   =   <YOUR CLIENT SECRET>
+INSTANCE_ID     =   <YOUR INSTANCE ID>
+
+## RUN
+```
+yarn start
+```
+
+## GET TOKEN
+```
 POST /api/v1/auth
+
+clientID        // 
+clientSecret    //
+```
+
+## Get Image S5P
+
+```
 POST /api/v1/process  
 
 clientID        // 
@@ -10,11 +45,18 @@ height          // 512px default
 fromUTC         // from date format UTC (2018-12-28T00:00:00Z)
 toUTC           // to date format UTC
 data            // evalscript data
+```
 
+## Get EvalScript
+```
 GET /api/v1/process/:data
+
+data            // evalscript data
+```
 
 ## EVALSCRIPTS DATA
 
+```
 NO2         // S5P Nitrogen Dioxide (NO2)
 NO22        // S5P Nitrogen Dioxide (NO2) script by Annamaria Luongo
 SO2         // S5P Sulfur Dioxide (SO2)
@@ -30,3 +72,4 @@ CLOUD4      // S5P Cloud Top Height
 CLOUD5      // S5P Cloud Top Pressure
 CLOUD6      // S5P Effective radiometric cloud fraction
 CO          // (default) S5P CARBON Monoxide 
+```
