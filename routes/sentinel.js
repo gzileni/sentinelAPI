@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const log = require('logbootstrap');
+// const stream = require('stream');
+const moment = require('moment');
 
 var sentinelAPI = require('../sentinelAPI');
 
@@ -35,17 +37,35 @@ router.get('/ratelimit/:instance_id', (req, res, next) => {
 
 router.post('/process', (req, res, next) => {
 
-  const data = req.body.data;
+  const options = {
+    clientID: req.body.clientID || process.env.CLIENT_ID, 
+    clientSecret: req.body.clientSecret || process.env.CLIENT_SECRET,
+    data: req.body.data,
+    bbox: req.body.bbox || [13,45,15,47],
+    fromUTC: req.body.fromUTC || moment.utc(),
+    toUTC: req.body.toUTC || moment.utc(),
+    width: req.body.width || 512,
+    height: req.body.height || 512
+  };
+  
+  const base64 = req.body.base64;
 
-  sentinelAPI.runProcess(req.body.clientID, req.body.clientSecret, data, (err, image) => {
+  log('info', 'OPTIONS \n' + JSON.stringify(options));
+
+  sentinelAPI.runProcess(options, (err, image) => {
     if (err != null) {
       log('error', 'ERROR /process \n' + JSON.stringify(err))
       res.status(400).send(err);
     } else {
-      //res.writeHead(200, { 'Content-Type': 'image/png' });
-      //res.status(200).send(image);
-      res.contentType('image/png');
-      res.end(image);
+      log('info', 'IMAGE BLOB \n' + image);
+      res.type(image.type);
+      image.arrayBuffer().then((buf) => {
+        if (base64) {
+          res.status(200).send(Buffer.from(buf).toString('base64'))
+        } else {
+          res.status(200).send(Buffer.from(buf))
+        }
+      });
     }
   });
 

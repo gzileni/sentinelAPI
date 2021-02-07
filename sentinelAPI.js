@@ -19,7 +19,7 @@ dotenv.config();
 async function getToken (clientID, clientSecret, callback) {
 
     var client_id = clientID || process.env.CLIENT_ID;
-    var client_secret = clientSecret || process.env.CLIENT_SECRET
+    var client_secret = clientSecret || process.env.CLIENT_SECRET;
 
     const instance = axios.create({
         baseURL: 'https://services.sentinel-hub.com'
@@ -81,7 +81,7 @@ let _getscript = (data, callback) => {
     
 };
 
-let _getRequest = () => {
+let _getRequest = (options) => {
 
     var request = {
         input: { 
@@ -89,28 +89,23 @@ let _getRequest = () => {
                 properties: {
                     crs: "http://www.opengis.net/def/crs/OGC/1.3/CRS84"
                 },
-                bbox: [
-                    13,
-                    45,
-                    15,
-                    47
-                ]
+                bbox: options.bbox
             },
             data: [
                 {
                     type: "S5PL2",
                     dataFilter: {
                         timeRange: {
-                            from: "2020-12-28T00:00:00Z",
-                            to: "2020-12-31T00:00:00Z"
+                            from: options.fromUTC,
+                            to: options.toUTC
                         }
                     }
                 }
             ]
         },
         output: {
-            width: 512,
-            height: 512
+            width: options.width,
+            height: options.height
         }
     };
 
@@ -118,7 +113,7 @@ let _getRequest = () => {
 
 }
 
-let runProcess = (clientID, clientSecret, data, callback) => {
+let runProcess = (options, callback) => {
 
     fetch("http://localhost:3000/api/v1/sentinel/auth", {
         method: "POST",
@@ -126,18 +121,18 @@ let runProcess = (clientID, clientSecret, data, callback) => {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "clientID": clientID, 
-            "clientSecret": clientSecret
+            "clientID": options.clientID, 
+            "clientSecret": options.clientSecret
         })
     }).then(_getResponseText).then(token => {
         
         console.log('TOKEN: ' + JSON.stringify(token));
 
-        _getscript(data, (err, script) => {
+        _getscript(options.data, (err, script) => {
 
             log('info', 'SCRIPT \n' + JSON.stringify(script));
 
-            let request = _getRequest();
+            let request = _getRequest(options);
             log('info', 'REQUEST \n' + request);
 
             const body = new FormData;
@@ -152,28 +147,17 @@ let runProcess = (clientID, clientSecret, data, callback) => {
                 "Connection": "keep-alive"
             };
 
-            var config = {
-                method: 'post',
-                url: 'https://creodias.sentinel-hub.com/api/v1/process',
-                headers: headers,
-                data : body
+            var requestOptions = {
+                method: 'POST',
+                body: body,
+                redirect: 'follow',
+                headers: headers
             };
-
-            axios.interceptors.response.use(response => {
-                // let data = selected[0].image2.data;
-                return response.data.toString('base64');
-                //return response;
-            }, error => {
-                return Promise.reject(error);
-            });
-
-            axios(config).then(response => {
-                log('success', JSON.stringify(response));
-                callback(null, response)
-            }).catch(error => {
-                log('error', error);
-                callback(error, null);
-            });
+              
+            fetch("https://creodias.sentinel-hub.com/api/v1/process", requestOptions)
+            .then(response => response.blob())
+            .then(result => callback(null, result))
+            .catch(error => callback(error, null));
 
         })
     

@@ -95,24 +95,37 @@
           this.getTestImage();
         },
         methods: {
+          createURLImage: function (bufferData) {
+            var arrayBufferView = new Uint8Array(bufferData);
+            var blob = new Blob( [ arrayBufferView ], { type: "image/png" } );
+            var urlCreator = window.URL || window.webkitURL;
+            return urlCreator.createObjectURL( blob );
+          },
           getTestImage: function() {
 
             let data = {
               data: 'CO'
             };
 
+            /*
             axios.interceptors.response.use(response => {
-              console.log(response.data)
-              var bytes = new Uint8Array(response.data);
-              var binary = bytes.reduce((data, b) => data += String.fromCharCode(b), '');
-              return "data:image/png;base64," + btoa(binary);
+              // return "data:image/png;base64," + this.hexToBase64(response);
+              // return "data:image/png;base64," + response.data;
+
+              let buff = new Buffer(response.data);
+              return response.data.toString('base64');
+
             }, function (error) {
               return Promise.reject(error);
             });
+            */
 
             axios.post('http://localhost:3000/api/v1/sentinel/process', data).then(imageBlob => {
-              console.log('image OK' + JSON.stringify(imageBlob));
-              this.imageUrl = imageBlob;
+              console.log('image OK \n' + JSON.stringify(imageBlob.data));
+
+              // this.imageUrl = this.createURLImage(imageBlob.data);
+              this.imageUrl = "data:image/png;base64," + imageBlob.data
+
             }).catch(function (error) {
               this.errors = error;
               console.log(error);
