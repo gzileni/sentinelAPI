@@ -18,12 +18,12 @@ by [SENTINEL HUB DASHBOARD](https://services.sentinel-hub.com/)
 
 ![dashboard1](./docs/img/dashboard1.png)
 
-- INSTANCE_ID     =   <YOUR INSTANCE ID>
+- INSTANCE_ID     =   YOUR INSTANCE ID
 
 ![dashboard2](./docs/img/dashboard2.png)
 
-- CLIENT_ID       =   <YOUR CLIENT ID>
-- CLIENT_SECRET   =   <YOUR CLIENT SECRET>
+- CLIENT_ID       =   YOUR CLIENT ID
+- CLIENT_SECRET   =   YOUR CLIENT SECRET
 
 ## RUN
 ```
