@@ -1,6 +1,6 @@
 
 # SENTINEL5P API
-![SENTINEL5P](./public/img/sentinel5p.jpg)
+![SENTINEL5P](https://github.com/gzileni/sentinelAPI/raw/main/public/img/sentinel5p.jpg)
 Sentinel API permette di ricevere da Sentinel HUB dati da [Sentinel-5P by ESA](http://www.tropomi.eu/data-products/level-2-products), satellite per misurare la qualità dell'aria dallo spazio.
 
 E' disponibile una versione [demo](https://sentinel5p.herokuapp.com/api/v1/)
@@ -14,7 +14,7 @@ E' disponibile una versione [demo](https://sentinel5p.herokuapp.com/api/v1/)
 
 ## Authentication
 E' necessario registrarsi a [Sentinel HUB](https://www.sentinel-hub.com/) per poter configurare il client OAuth
-![dashboard2](./docs/img/dashboard2.png)
+![dashboard2](https://github.com/gzileni/sentinelAPI/raw/main/docs/img/dashboard2.png)
 
 ### CREATE .ENV FILE
 Creare il file .env con le variabili per accedere a Sentinel HUB
