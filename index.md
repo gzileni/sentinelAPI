@@ -84,11 +84,15 @@ var body = new FormData();
 body.append("clientID", "<YOUR CLIENT ID>");
 body.append("clientSecret", "<YOUR CLIENT SECRET>");
 body.append("evalscript", "CO");
-body.append("bbox", "[13,45,15,47]");
 body.append("fromUTC", "2019-04-01T00:00:00Z");
 body.append("toUTC", "2019-06-30T00:00:00Z");
 body.append("width", "512");
 body.append("height", "512");
+body.append("lng1", "13");
+body.append("lat1", "45");
+body.append("lng2", "15");
+body.append("lat2", "47");
+body.append("base64", "true");
 
 var requestOptions = {
   method: 'POST',
