@@ -54,7 +54,7 @@ var requestOptions = {
   redirect: 'follow'
 };
 
-fetch("http://sentinelAPI.blockjuice.net/api/v1/auth", requestOptions)
+fetch("http://localhost:3000/api/v1/auth", requestOptions)
   .then(response => response.text())
   .then(result => console.log(result))
   .catch(error => console.log('error', error));
@@ -88,7 +88,7 @@ var requestOptions = {
   redirect: 'follow'
 };
 
-fetch("http://sentinelAPI.blockjuice.net/api/v1/sentinel/process", requestOptions)
+fetch("http://localhost:3000/api/v1/sentinel/process", requestOptions)
   .then(response => response.text())
   .then(result => console.log(result))
   .catch(error => console.log('error', error));
@@ -109,7 +109,7 @@ var requestOptions = {
   redirect: 'follow'
 };
 
-fetch("/api/v1/process/?evalscript=CO", requestOptions)
+fetch("http://localhost:3000/api/v1/process/?evalscript=CO", requestOptions)
   .then(response => response.text())
   .then(result => console.log(result))
   .catch(error => console.log('error', error));
