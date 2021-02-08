@@ -14,4 +14,8 @@ router.get('/', (req, res, next) => {
     })
 });
 
+router.get('/wakeup', (req, res, next) => {
+    res.status(200).send("I'm awake!")
+});
+
 module.exports = router;
