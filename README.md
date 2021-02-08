@@ -75,13 +75,12 @@ myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
 var urlencoded = new URLSearchParams();
 urlencoded.append("clientID", "<YOUR CLIENT ID>");
 urlencoded.append("clientSecret", "<YOUR CLIENT SECRET>");
-urlencoded.append("evalscript", "\"CO\"");
+urlencoded.append("evalscript", "CO");
 urlencoded.append("bbox", "[13,45,15,47]");
-urlencoded.append("fromUTC", "\"2019-04-01T00:00:00Z\"");
-urlencoded.append("toUTC", "\"2019-06-30T00:00:00Z\"");
+urlencoded.append("fromUTC", "2019-04-01T00:00:00Z");
+urlencoded.append("toUTC", "2019-06-30T00:00:00Z");
 urlencoded.append("width", "512");
 urlencoded.append("height", "512");
-urlencoded.append("base64", "true");
 
 var requestOptions = {
   method: 'POST',

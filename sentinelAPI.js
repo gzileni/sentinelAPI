@@ -69,9 +69,9 @@ function _getResponseText(res) {
 
 };
 
-let _getscript = (data, callback) => {
+let _getscript = (options, callback) => {
 
-    fetch("http://localhost:3000/api/v1/process/" + data).then(_getResponseText).then(script => { 
+    fetch(options.url + "/api/v1/process?evalscript=" + options.evalscript).then(_getResponseText).then(script => { 
         log('success', 'OK Script.');
         callback(null, script)
     }).catch(error => {
@@ -115,7 +115,7 @@ let _getRequest = (options) => {
 
 let runProcess = (options, callback) => {
 
-    fetch("http://localhost:3000/api/v1/sentinel/auth", {
+    fetch(options.url + "/api/v1/sentinel/auth", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -128,7 +128,7 @@ let runProcess = (options, callback) => {
         
         console.log('TOKEN: ' + JSON.stringify(token));
 
-        _getscript(options.evalscript, (err, script) => {
+        _getscript(options, (err, script) => {
 
             log('info', 'SCRIPT \n' + JSON.stringify(script));
 
