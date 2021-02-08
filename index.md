@@ -109,11 +109,10 @@ Restituisce lo script personalizzato per l'elaborazione dei dati satellitari
 
 ### Esempio
 ```
-var raw = "";
+const fetch = require('node-fetch');
 
 var requestOptions = {
   method: 'GET',
-  body: raw,
   redirect: 'follow'
 };
 
