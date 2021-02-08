@@ -128,7 +128,7 @@ let runProcess = (options, callback) => {
         
         console.log('TOKEN: ' + JSON.stringify(token));
 
-        _getscript(options.data, (err, script) => {
+        _getscript(options.evalscript, (err, script) => {
 
             log('info', 'SCRIPT \n' + JSON.stringify(script));
 

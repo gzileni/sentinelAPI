@@ -21,26 +21,12 @@ router.post('/auth', (req, res, next) => {
 
 });
 
-router.get('/ratelimit/:instance_id', (req, res, next) => {
-
-  const instance_id = req.params.instance_id;
-  
-  sentinelAPI.getRateLimit(instance_id, (err, response) => {
-    if (err != null) {
-      res.status(400).send(err);
-    } else {
-      res.status(200).jsonp(response);
-    }
-  });
-
-});
-
 router.post('/process', (req, res, next) => {
 
   const options = {
     clientID: req.body.clientID || process.env.CLIENT_ID, 
     clientSecret: req.body.clientSecret || process.env.CLIENT_SECRET,
-    data: req.body.data,
+    data: req.body.evalscript,
     bbox: req.body.bbox || [13,45,15,47],
     fromUTC: req.body.fromUTC || moment.utc(),
     toUTC: req.body.toUTC || moment.utc(),

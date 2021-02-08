@@ -9,21 +9,18 @@ Sentinel API permette di ricevere da Sentinel HUB dati da [Sentinel-5P by ESA](h
     yarn install
 ```
 
+## Authentication
+E' necessario registrarsi a [Sentinel HUB](https://www.sentinel-hub.com/) per poter configurare il client OAuth
+![dashboard2](./docs/img/dashboard2.png)
+
 ### CREATE .ENV FILE
+Creare il file .env con le variabili per accedere a Sentinel HUB
+
 ```
     cd sentinelAPI
     nano .env    
 ```
-
-## INSTANCE ID
-by [SENTINEL HUB DASHBOARD](https://services.sentinel-hub.com/)
-
-![dashboard1](./docs/img/dashboard1.png)
-
-- INSTANCE_ID     =   YOUR INSTANCE ID
-
-## AUTHENTICATION
-![dashboard2](./docs/img/dashboard2.png)
+Aggiungere righe con 
 
 - CLIENT_ID       =   YOUR CLIENT ID
 - CLIENT_SECRET   =   YOUR CLIENT SECRET
@@ -34,15 +31,33 @@ yarn start
 ```
 
 ## DOCKER
+```
+$ docker build -t yourusername/sentinelAPI .
+$ docker run -p3000:3000 yourusername/sentinelAPI
+```
 
 ## GET TOKEN
+Restituisce il Token di autorizzazione per accedere ai dati di [Sentinel HUB](https://www.sentinel-hub.com/)
 
 **POST /api/v1/auth**
 
-#### Parametri
+### Esempio
+
 ```
-clientID        // 
-clientSecret    //
+var formdata = new FormData();
+formdata.append("clientID", "");
+formdata.append("clientSecret", "");
+
+var requestOptions = {
+  method: 'POST',
+  body: formdata,
+  redirect: 'follow'
+};
+
+fetch("http://sentinelAPI.blockjuice.net/api/v1/auth", requestOptions)
+  .then(response => response.text())
+  .then(result => console.log(result))
+  .catch(error => console.log('error', error));
 ```
 
 ## Get Image S5P
@@ -50,22 +65,54 @@ Restituisce l'immagine del satellite Sentinel da visualizzare sul client in form
 
 **POST /api/v1/process**
 
-#### Parametri
+### Esempio
 ```
-clientID        // 
-clientSecret    // 
-base64          // (True or False) for client image or false to only buffer data to display image on PostMan
-width           // 512px default
-height          // 512px default
-fromUTC         // from date format UTC (2018-12-28T00:00:00Z)
-toUTC           // to date format UTC
-evalscript      // evalscript data
+var myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+var urlencoded = new URLSearchParams();
+urlencoded.append("clientID", "<YOUR CLIENT ID>");
+urlencoded.append("clientSecret", "<YOUR CLIENT SECRET>");
+urlencoded.append("evalscript", "\"CO\"");
+urlencoded.append("bbox", "[13,45,15,47]");
+urlencoded.append("fromUTC", "\"2019-04-01T00:00:00Z\"");
+urlencoded.append("toUTC", "\"2019-06-30T00:00:00Z\"");
+urlencoded.append("width", "512");
+urlencoded.append("height", "512");
+urlencoded.append("base64", "true");
+
+var requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: urlencoded,
+  redirect: 'follow'
+};
+
+fetch("http://sentinelAPI.blockjuice.net/api/v1/sentinel/process", requestOptions)
+  .then(response => response.text())
+  .then(result => console.log(result))
+  .catch(error => console.log('error', error));
 ```
 
 ## Get EvalScript
 Restituisce lo script personalizzato per l'elaborazione dei dati satellitari
+
+**/api/v1/process?evalscript=**
+
+### Esempio
 ```
-GET /api/v1/process?evalscript=
+var raw = "";
+
+var requestOptions = {
+  method: 'GET',
+  body: raw,
+  redirect: 'follow'
+};
+
+fetch("/api/v1/process/?evalscript=CO", requestOptions)
+  .then(response => response.text())
+  .then(result => console.log(result))
+  .catch(error => console.log('error', error));
 ```
 
 ## Evalscipts
@@ -87,6 +134,3 @@ Nei parametri dei metodi delle richieste HTTP si possono specificare una serie d
 - CLOUD5   [Cloud top pressure](http://www.tropomi.eu/data-products/carbon-monoxide)
 - CLOUD6   [Effective radiometric cloud fraction](http://www.tropomi.eu/data-products/carbon-monoxide)
 - CO        (default) [CARBON Monoxide](http://www.tropomi.eu/data-products/carbon-monoxide)
-
-## Error Codes
-...

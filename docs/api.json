@@ -1,292 +1,249 @@
 {
-  "openapi": "3.0.1",
-  "info": {
-    "title": "User API",
-    "description": "This is a sample User API created with Express.js. You can find more about it [here](https://github.com/kasramp/sample-rest-with-expressjs).",
-    "contact": {
-      "email": "kasra@madadipouya.com"
-    },
-    "license": {
-      "name": "MIT",
-      "url": "https://opensource.org/licenses/MIT"
-    },
-    "version": "1.0.0"
-  },
-  "tags": [
-    {
-      "name": "user",
-      "description": "Operations about user"
-    }
-  ],
-  "paths": {
-    "/api/v1/users": {
-      "get": {
-        "tags": [
-          "user"
-        ],
-        "summary": "Get list of users",
-        "operationId": "getUsers",
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User",
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "user"
-        ],
-        "summary": "Create a user",
-        "operationId": "createUser",
-        "requestBody": {
-          "description": "Created user object",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UserDto"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "description": "User created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid payload supplied",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/users/{id}": {
-      "get": {
-        "tags": [
-          "user"
-        ],
-        "summary": "Get a user by id",
-        "operationId": "getUserById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "The id of a user",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid id supplied",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "user"
-        ],
-        "summary": "Update a user",
-        "operationId": "updateUser",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "id of a user to update",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Updated user object",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UserDto"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid payload supplied",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "User not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "user"
-        ],
-        "summary": "Delete a user",
-        "operationId": "deleteUserById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "The id of user to be deleted",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "User deleted successfully"
-          },
-          "400": {
-            "description": "Invalid id supplied",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "UserDto": {
-        "type": "object",
-        "properties": {
-          "firstName": {
-            "type": "string"
-          },
-          "lastName": {
-            "type": "string"
-          },
-          "age": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
-      "User": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "firstName": {
-            "type": "string"
-          },
-          "lastName": {
-            "type": "string"
-          },
-          "age": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
-      "Error": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string"
-          }
-        }
-      },
-      "ApiResponse": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "type": {
-            "type": "string"
-          },
-          "message": {
-            "type": "string"
-          }
-        }
-      }
-    }
-  }
+	"info": {
+		"_postman_id": "e6b66a47-3b7d-48ea-8035-8d25155baf4c",
+		"name": "sentinel API",
+		"description": "# Introduction\nSentinel API permette di ricevere da Sentinel HUB dati da [Sentinel-5P by ESA](http://www.tropomi.eu/data-products/level-2-products), satellite per misurare la qualità dell'aria dallo spazio.\n\n# Authentication\nE' necessario registrarsi a [Sentinel HUB](https://www.sentinel-hub.com/) per poter configurare il client OAuth \n![APP](https://github.com/gzileni/sentinelAPI/raw/main/docs/img/dashboard2.png)\n\n# Error Codes\n*work in progress...* \n\n# EVALSCRIPTS\n\nGli script personalizzati [EVALSCRPT V3](https://docs.sentinel-hub.com/api/latest/evalscript/v3/) sono codici Javascript richiesti per elaborare i dati satellitari da Sentinel Hub e quali valori il servizio restituirà.\nNei parametri dei metodi delle richieste HTTP si possono specificare una serie di script come i seguenti:\n\n- NO2      [Nitrogen Dioxide](http://www.tropomi.eu/data-products/nitrogen-dioxide)\n- NO22     [Nitrogen Dioxide (NO2) script by Annamaria Luongo](https://custom-scripts.sentinel-hub.com/sentinel-5p/nitrogen_dioxide_tropospheric_column/)\n- SO2      [Sulfur Dioxide](http://www.tropomi.eu/data-products/sulphur-dioxide)\n- HCHO     [Formaldehyde](http://www.tropomi.eu/data-products/formaldehyde)\n- O3       [Ozone](http://www.tropomi.eu/data-products/total-ozone-column)\n- CH4      [Methane](http://www.tropomi.eu/data-products/methane)\n- AS1      [UV (Ultraviolet) Aerosol Index calculated based on wavelengths of 340 nm and 380 nm](http://www.tropomi.eu/data-products/uv-aerosol-index)\n- AS2      [UV (Ultraviolet) Aerosol Index calculated based on wavelengths of 354 nm and 388 nm](http://www.tropomi.eu/data-products/uv-aerosol-index)\n- CLOUD1   [Cloud base height](http://www.tropomi.eu/data-products/carbon-monoxide)\n- CLOUD2   [Cloud base pressure](http://www.tropomi.eu/data-products/carbon-monoxide)\n- CLOUD3   [Cloud optical thickness](http://www.tropomi.eu/data-products/carbon-monoxide)\n- CLOUD4   [Cloud top height](http://www.tropomi.eu/data-products/carbon-monoxide)\n- CLOUD5   [Cloud top pressure](http://www.tropomi.eu/data-products/carbon-monoxide)\n- CLOUD6   [Effective radiometric cloud fraction](http://www.tropomi.eu/data-products/carbon-monoxide)\n- CO        (default) [CARBON Monoxide](http://www.tropomi.eu/data-products/carbon-monoxide)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Custom Evalscript",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "/api/v1/process/?evalscript=CO",
+					"path": [
+						"api",
+						"v1",
+						"process",
+						""
+					],
+					"query": [
+						{
+							"key": "evalscript",
+							"value": "CO"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Default",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "/api/v1/process/:data",
+							"path": [
+								"api",
+								"v1",
+								"process",
+								":data"
+							],
+							"variable": [
+								{
+									"key": "data"
+								}
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": ""
+				}
+			]
+		},
+		{
+			"name": "Authorization TOKEN",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "clientID",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "clientSecret",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://sentinelAPI.blockjuice.net/api/v1/auth",
+					"protocol": "http",
+					"host": [
+						"sentinelAPI",
+						"blockjuice",
+						"net"
+					],
+					"path": [
+						"api",
+						"v1",
+						"auth"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "New Request",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "clientID",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "clientSecret",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "/api/v1/auth",
+							"path": [
+								"api",
+								"v1",
+								"auth"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				}
+			]
+		},
+		{
+			"name": "Get Image",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://sentinelAPI.blockjuice.net/api/v1/sentinel/process",
+					"protocol": "http",
+					"host": [
+						"sentinelAPI",
+						"blockjuice",
+						"net"
+					],
+					"path": [
+						"api",
+						"v1",
+						"sentinel",
+						"process"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Get Image",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "clientID",
+									"value": "<YOUR CLIENT ID>",
+									"type": "text"
+								},
+								{
+									"key": "clientSecret",
+									"value": "<YOUR CLIENT SECRET>",
+									"type": "text"
+								},
+								{
+									"key": "evalscript",
+									"value": "\"CO\"",
+									"type": "text"
+								},
+								{
+									"key": "bbox",
+									"value": "[13,45,15,47]",
+									"type": "text"
+								},
+								{
+									"key": "fromUTC",
+									"value": "\"2019-04-01T00:00:00Z\"",
+									"type": "text"
+								},
+								{
+									"key": "toUTC",
+									"value": "\"2019-06-30T00:00:00Z\"",
+									"type": "text"
+								},
+								{
+									"key": "width",
+									"value": "512",
+									"type": "text"
+								},
+								{
+									"key": "height",
+									"value": "512",
+									"type": "text"
+								},
+								{
+									"key": "base64",
+									"value": "true",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://sentinelAPI.blockjuice.net/api/v1/sentinel/process",
+							"protocol": "http",
+							"host": [
+								"sentinelAPI",
+								"blockjuice",
+								"net"
+							],
+							"path": [
+								"api",
+								"v1",
+								"sentinel",
+								"process"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": null
+				}
+			]
+		}
+	]
 }

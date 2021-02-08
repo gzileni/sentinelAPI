@@ -10,9 +10,9 @@ const fs = require('fs');
 var log = require('logbootstrap');
 
 /* GET home page. */
-router.get('/:data', (req, res, next) => {
+router.get('/', (req, res, next) => {
   
-  const data = req.params.data;
+  const data = req.query.evalscript;
   let script;
 
   switch (data) {
