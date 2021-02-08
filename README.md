@@ -46,9 +46,12 @@ Restituisce il Token di autorizzazione per accedere ai dati di [Sentinel HUB](ht
 ### Esempio
 
 ```
+const FormData = require('form-data');
+const fetch = require('node-fetch');
+
 var formdata = new FormData();
-formdata.append("clientID", "");
-formdata.append("clientSecret", "");
+formdata.append("clientID", "<YOUR CLIENT ID");
+formdata.append("clientSecret", "<YOUR CLIENT SECRET>");
 
 var requestOptions = {
   method: 'POST',
@@ -69,28 +72,32 @@ Restituisce l'immagine del satellite Sentinel da visualizzare sul client in form
 
 ### Esempio
 ```
-var myHeaders = new Headers();
-myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+const FormData = require('form-data');
+const fetch = require('node-fetch');
 
-var urlencoded = new URLSearchParams();
-urlencoded.append("clientID", "<YOUR CLIENT ID>");
-urlencoded.append("clientSecret", "<YOUR CLIENT SECRET>");
-urlencoded.append("evalscript", "CO");
-urlencoded.append("bbox", "[13,45,15,47]");
-urlencoded.append("fromUTC", "2019-04-01T00:00:00Z");
-urlencoded.append("toUTC", "2019-06-30T00:00:00Z");
-urlencoded.append("width", "512");
-urlencoded.append("height", "512");
+var headers = {
+    "Content-Type", "application/x-www-form-urlencoded"
+};
+
+var body = new FormData();
+body.append("clientID", "<YOUR CLIENT ID>");
+body.append("clientSecret", "<YOUR CLIENT SECRET>");
+body.append("evalscript", "CO");
+body.append("bbox", "[13,45,15,47]");
+body.append("fromUTC", "2019-04-01T00:00:00Z");
+body.append("toUTC", "2019-06-30T00:00:00Z");
+body.append("width", "512");
+body.append("height", "512");
 
 var requestOptions = {
   method: 'POST',
-  headers: myHeaders,
+  headers: body,
   body: urlencoded,
   redirect: 'follow'
 };
 
 fetch("http://localhost:3000/api/v1/sentinel/process", requestOptions)
-  .then(response => response.text())
+  .then(response => response.blob())
   .then(result => console.log(result))
   .catch(error => console.log('error', error));
 ```
