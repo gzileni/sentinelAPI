@@ -1,4 +1,3 @@
-
 # SENTINEL5P API
 Sentinel API permette di ricevere da Sentinel HUB dati da [Sentinel-5P by ESA](http://www.tropomi.eu/data-products/level-2-products), satellite per misurare la qualità dell'aria dallo spazio.
 
@@ -75,13 +74,12 @@ myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
 var urlencoded = new URLSearchParams();
 urlencoded.append("clientID", "<YOUR CLIENT ID>");
 urlencoded.append("clientSecret", "<YOUR CLIENT SECRET>");
-urlencoded.append("evalscript", "\"CO\"");
+urlencoded.append("evalscript", "CO");
 urlencoded.append("bbox", "[13,45,15,47]");
-urlencoded.append("fromUTC", "\"2019-04-01T00:00:00Z\"");
-urlencoded.append("toUTC", "\"2019-06-30T00:00:00Z\"");
+urlencoded.append("fromUTC", "2019-04-01T00:00:00Z");
+urlencoded.append("toUTC", "2019-06-30T00:00:00Z");
 urlencoded.append("width", "512");
 urlencoded.append("height", "512");
-urlencoded.append("base64", "true");
 
 var requestOptions = {
   method: 'POST',
