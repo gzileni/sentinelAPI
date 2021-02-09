@@ -4,7 +4,9 @@
 
 Sentinel API permette di ricevere da Sentinel HUB dati da [Sentinel-5P by ESA](http://www.tropomi.eu/data-products/level-2-products), satellite per misurare la qualità dell'aria dallo spazio.
 
-E' disponibile una versione [demo](https://sentinel5p.herokuapp.com/api/v1/)
+Il Server REST API utilizza il plugin [sentinelhub](https://gzileni.github.io/sentinelHUB/).
+
+E' disponibile una versione online qui: [https://sentinel5p.herokuapp.com/api/v1/](https://sentinel5p.herokuapp.com/api/v1/)
 
 ## INSTALLATION
 ```
@@ -24,8 +26,8 @@ Inoltre creare la propria istanza del layer da visualizzare sulla mappa
 Creare il file .env con le variabili per accedere a Sentinel HUB
 
 ```
-    cd sentinelAPI
-    nano .env    
+cd sentinelAPI
+nano .env    
 ```
 Aggiungere righe con 
 
