@@ -16,6 +16,9 @@ E' disponibile una versione [demo](https://sentinel5p.herokuapp.com/api/v1/)
 E' necessario registrarsi a [Sentinel HUB](https://www.sentinel-hub.com/) per poter configurare il client OAuth
 ![dashboard2](https://github.com/gzileni/sentinelAPI/raw/main/docs/img/dashboard2.png)
 
+Inoltre creare la propria istanza del layer da visualizzare sulla mappa
+![dashboard2](https://github.com/gzileni/sentinelAPI/raw/main/docs/img/dashboard1.png)
+
 ### CREATE .ENV FILE
 Creare il file .env con le variabili per accedere a Sentinel HUB
 
@@ -27,6 +30,7 @@ Aggiungere righe con
 
 - CLIENT_ID       =   YOUR CLIENT ID
 - CLIENT_SECRET   =   YOUR CLIENT SECRET
+- INSTANCE_ID     =   YOUR INSTANCE_ID
 
 ## RUN
 ```
