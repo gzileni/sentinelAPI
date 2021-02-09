@@ -17,6 +17,9 @@ E' disponibile una versione [demo](https://sentinel5p.herokuapp.com/api/v1/)
 E' necessario registrarsi a [Sentinel HUB](https://www.sentinel-hub.com/) per poter configurare il client OAuth
 ![dashboard2](./docs/img/dashboard2.png)
 
+Inoltre creare la propria istanza del layer da visualizzare sulla mappa
+![dashboard2](./docs/img/dashboard1.png)
+
 ### CREATE .ENV FILE
 Creare il file .env con le variabili per accedere a Sentinel HUB
 
@@ -28,6 +31,7 @@ Aggiungere righe con
 
 - CLIENT_ID       =   YOUR CLIENT ID
 - CLIENT_SECRET   =   YOUR CLIENT SECRET
+- INSTANCE_ID     =   YOUR INSTANCE_ID
 
 ## RUN
 ```
@@ -74,15 +78,6 @@ Restituisce l'immagine del satellite Sentinel da visualizzare sul client in form
 
 ### Esempio
 ```
-
-// controllare valore dei parametri nel body
-  // --------------------------------
-  // clientID (required)
-  // clientSecret (required)
-  // evalscript (not required) default value 'CO'
-  // lng1, lat1, lng2, lat2 (required)
-  // fromUTC (not required) default value yesterday
-  // toUTC (not required) default value yesterday
 
 const FormData = require('form-data');
 const fetch = require('node-fetch');
