@@ -51,19 +51,19 @@ Restituisce il Token di autorizzazione per accedere ai dati di [Sentinel HUB](ht
 const FormData = require('form-data');
 const fetch = require('node-fetch');
 
-var formdata = new FormData();
-formdata.append("clientID", "<YOUR CLIENT ID");
-formdata.append("clientSecret", "<YOUR CLIENT SECRET>");
+var body = new FormData();
+body.append("clientID", "<YOUR CLIENT ID");
+body.append("clientSecret", "<YOUR CLIENT SECRET>");
 
 var requestOptions = {
   method: 'POST',
-  body: formdata,
+  body: body,
   redirect: 'follow'
 };
 
 fetch("http://localhost:3000/api/v1/auth", requestOptions)
   .then(response => response.text())
-  .then(result => console.log(result))
+  .then(token => console.log(token))
   .catch(error => console.log('error', error));
 ```
 
@@ -74,6 +74,16 @@ Restituisce l'immagine del satellite Sentinel da visualizzare sul client in form
 
 ### Esempio
 ```
+
+// controllare valore dei parametri nel body
+  // --------------------------------
+  // clientID (required)
+  // clientSecret (required)
+  // evalscript (not required) default value 'CO'
+  // lng1, lat1, lng2, lat2 (required)
+  // fromUTC (not required) default value yesterday
+  // toUTC (not required) default value yesterday
+
 const FormData = require('form-data');
 const fetch = require('node-fetch');
 
@@ -82,23 +92,23 @@ var headers = {
 };
 
 var body = new FormData();
-body.append("clientID", "<YOUR CLIENT ID>");
-body.append("clientSecret", "<YOUR CLIENT SECRET>");
-body.append("evalscript", "CO");
-body.append("fromUTC", "2019-04-01T00:00:00Z");
-body.append("toUTC", "2019-06-30T00:00:00Z");
-body.append("width", "512");
-body.append("height", "512");
-body.append("lng1", "13");
-body.append("lat1", "45");
-body.append("lng2", "15");
-body.append("lat2", "47");
-body.append("base64", "true");
+body.append("clientID", "<YOUR CLIENT ID>");              // required
+body.append("clientSecret", "<YOUR CLIENT SECRET>");      // required
+body.append("evalscript", "CO");                          // not required, default value = 'CO'
+body.append("fromUTC", "2019-04-01T00:00:00Z");           // not required, default value to yesterday
+body.append("toUTC", "2019-06-30T00:00:00Z");             // not required, default value to yesterday
+body.append("width", "512");                              // not required, default value = 512
+body.append("height", "512");                             // not required, default value = 512
+body.append("lng1", "13");                                // required 
+body.append("lat1", "45");                                // required
+body.append("lng2", "15");                                // required
+body.append("lat2", "47");                                // required
+body.append("base64", "true");                            // not required, dafault value = 'false'
 
 var requestOptions = {
   method: 'POST',
-  headers: body,
-  body: urlencoded,
+  headers: headers,
+  body: body,
   redirect: 'follow'
 };
 
@@ -146,4 +156,4 @@ Nei parametri dei metodi delle richieste HTTP si possono specificare una serie d
 - CLOUD4   [Cloud top height](http://www.tropomi.eu/data-products/carbon-monoxide)
 - CLOUD5   [Cloud top pressure](http://www.tropomi.eu/data-products/carbon-monoxide)
 - CLOUD6   [Effective radiometric cloud fraction](http://www.tropomi.eu/data-products/carbon-monoxide)
-- CO        (default) [CARBON Monoxide](http://www.tropomi.eu/data-products/carbon-monoxide)
+- CO       [CARBON Monoxide](http://www.tropomi.eu/data-products/carbon-monoxide)
