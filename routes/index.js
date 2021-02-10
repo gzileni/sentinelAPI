@@ -14,4 +14,10 @@ router.get('/', (req, res, next) => {
     })
 });
 
+router.get('/demo', (req, res, next) => {
+    res.render('demo', { 
+        title: process.env.TITLE || 'sentinel5P API'
+    })
+});
+
 module.exports = router;

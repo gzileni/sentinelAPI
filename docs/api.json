@@ -1,13 +1,14 @@
 {
+	"openapi": "3.0.1",
 	"info": {
 		"_postman_id": "e6b66a47-3b7d-48ea-8035-8d25155baf4c",
 		"name": "sentinel API",
-		"description": "# Introduction\nSentinel API permette di ricevere da Sentinel HUB dati da [Sentinel-5P by ESA](http://www.tropomi.eu/data-products/level-2-products), satellite per misurare la qualità dell'aria dallo spazio.\n\n# Authentication\nE' necessario registrarsi a [Sentinel HUB](https://www.sentinel-hub.com/) per poter configurare il client OAuth \n![APP](https://github.com/gzileni/sentinelAPI/raw/main/docs/img/dashboard2.png)\n\n# Error Codes\n*work in progress...* \n\n# EVALSCRIPTS\n\nGli script personalizzati [EVALSCRPT V3](https://docs.sentinel-hub.com/api/latest/evalscript/v3/) sono codici Javascript richiesti per elaborare i dati satellitari da Sentinel Hub e quali valori il servizio restituirà.\nNei parametri dei metodi delle richieste HTTP si possono specificare una serie di script come i seguenti:\n\n- NO2      [Nitrogen Dioxide](http://www.tropomi.eu/data-products/nitrogen-dioxide)\n- NO22     [Nitrogen Dioxide (NO2) script by Annamaria Luongo](https://custom-scripts.sentinel-hub.com/sentinel-5p/nitrogen_dioxide_tropospheric_column/)\n- SO2      [Sulfur Dioxide](http://www.tropomi.eu/data-products/sulphur-dioxide)\n- HCHO     [Formaldehyde](http://www.tropomi.eu/data-products/formaldehyde)\n- O3       [Ozone](http://www.tropomi.eu/data-products/total-ozone-column)\n- CH4      [Methane](http://www.tropomi.eu/data-products/methane)\n- AS1      [UV (Ultraviolet) Aerosol Index calculated based on wavelengths of 340 nm and 380 nm](http://www.tropomi.eu/data-products/uv-aerosol-index)\n- AS2      [UV (Ultraviolet) Aerosol Index calculated based on wavelengths of 354 nm and 388 nm](http://www.tropomi.eu/data-products/uv-aerosol-index)\n- CLOUD1   [Cloud base height](http://www.tropomi.eu/data-products/carbon-monoxide)\n- CLOUD2   [Cloud base pressure](http://www.tropomi.eu/data-products/carbon-monoxide)\n- CLOUD3   [Cloud optical thickness](http://www.tropomi.eu/data-products/carbon-monoxide)\n- CLOUD4   [Cloud top height](http://www.tropomi.eu/data-products/carbon-monoxide)\n- CLOUD5   [Cloud top pressure](http://www.tropomi.eu/data-products/carbon-monoxide)\n- CLOUD6   [Effective radiometric cloud fraction](http://www.tropomi.eu/data-products/carbon-monoxide)\n- CO        (default) [CARBON Monoxide](http://www.tropomi.eu/data-products/carbon-monoxide)",
+		"description": "# Introduction\nWhat does your API do?\n\n# Overview\nThings that the developers should know about\n\n# Authentication\nWhat is the preferred way of using the API?\n\n# Error Codes\nWhat errors and status codes can a user expect?\n\n# EVALSCRIPTS\n\nGli script personalizzati [EVALSCRPT V3](https://docs.sentinel-hub.com/api/latest/evalscript/v3/) sono codici Javascript richiesti per elaborare i dati satellitari da Sentinel Hub e quali valori il servizio restituirà.\nNei parametri dei metodi delle richieste HTTP si possono specificare una serie di script come i seguenti:\n\n- NO2      [Nitrogen Dioxide](http://www.tropomi.eu/data-products/nitrogen-dioxide)\n- NO22     [Nitrogen Dioxide (NO2) script by Annamaria Luongo](https://custom-scripts.sentinel-hub.com/sentinel-5p/nitrogen_dioxide_tropospheric_column/)\n- SO2      [Sulfur Dioxide](http://www.tropomi.eu/data-products/sulphur-dioxide)\n- HCHO     [Formaldehyde](http://www.tropomi.eu/data-products/formaldehyde)\n- O3       [Ozone](http://www.tropomi.eu/data-products/total-ozone-column)\n- CH4      [Methane](http://www.tropomi.eu/data-products/methane)\n- AS1      [UV (Ultraviolet) Aerosol Index calculated based on wavelengths of 340 nm and 380 nm](http://www.tropomi.eu/data-products/uv-aerosol-index)\n- AS2      [UV (Ultraviolet) Aerosol Index calculated based on wavelengths of 354 nm and 388 nm](http://www.tropomi.eu/data-products/uv-aerosol-index)\n- CLOUD1   [Cloud base height](http://www.tropomi.eu/data-products/carbon-monoxide)\n- CLOUD2   [Cloud base pressure](http://www.tropomi.eu/data-products/carbon-monoxide)\n- CLOUD3   [Cloud optical thickness](http://www.tropomi.eu/data-products/carbon-monoxide)\n- CLOUD4   [Cloud top height](http://www.tropomi.eu/data-products/carbon-monoxide)\n- CLOUD5   [Cloud top pressure](http://www.tropomi.eu/data-products/carbon-monoxide)\n- CLOUD6   [Effective radiometric cloud fraction](http://www.tropomi.eu/data-products/carbon-monoxide)\n- CO        (default) [CARBON Monoxide](http://www.tropomi.eu/data-products/carbon-monoxide)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Custom Evalscript",
+			"name": "/api/v1/process",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -67,7 +68,7 @@
 			]
 		},
 		{
-			"name": "Authorization TOKEN",
+			"name": "/api/v1/auth",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -87,13 +88,7 @@
 					]
 				},
 				"url": {
-					"raw": "http://sentinelAPI.blockjuice.net/api/v1/auth",
-					"protocol": "http",
-					"host": [
-						"sentinelAPI",
-						"blockjuice",
-						"net"
-					],
+					"raw": "/api/v1/auth",
 					"path": [
 						"api",
 						"v1",
@@ -128,113 +123,6 @@
 								"api",
 								"v1",
 								"auth"
-							]
-						}
-					},
-					"_postman_previewlanguage": null,
-					"header": null,
-					"cookie": [],
-					"body": null
-				}
-			]
-		},
-		{
-			"name": "Get Image",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "http://sentinelAPI.blockjuice.net/api/v1/sentinel/process",
-					"protocol": "http",
-					"host": [
-						"sentinelAPI",
-						"blockjuice",
-						"net"
-					],
-					"path": [
-						"api",
-						"v1",
-						"sentinel",
-						"process"
-					]
-				}
-			},
-			"response": [
-				{
-					"name": "Get Image",
-					"originalRequest": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/x-www-form-urlencoded",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "clientID",
-									"value": "<YOUR CLIENT ID>",
-									"type": "text"
-								},
-								{
-									"key": "clientSecret",
-									"value": "<YOUR CLIENT SECRET>",
-									"type": "text"
-								},
-								{
-									"key": "evalscript",
-									"value": "\"CO\"",
-									"type": "text"
-								},
-								{
-									"key": "bbox",
-									"value": "[13,45,15,47]",
-									"type": "text"
-								},
-								{
-									"key": "fromUTC",
-									"value": "\"2019-04-01T00:00:00Z\"",
-									"type": "text"
-								},
-								{
-									"key": "toUTC",
-									"value": "\"2019-06-30T00:00:00Z\"",
-									"type": "text"
-								},
-								{
-									"key": "width",
-									"value": "512",
-									"type": "text"
-								},
-								{
-									"key": "height",
-									"value": "512",
-									"type": "text"
-								},
-								{
-									"key": "base64",
-									"value": "true",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "http://sentinelAPI.blockjuice.net/api/v1/sentinel/process",
-							"protocol": "http",
-							"host": [
-								"sentinelAPI",
-								"blockjuice",
-								"net"
-							],
-							"path": [
-								"api",
-								"v1",
-								"sentinel",
-								"process"
 							]
 						}
 					},

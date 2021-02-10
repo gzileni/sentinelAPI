@@ -10,7 +10,7 @@
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/bootstrap-datepicker.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+    <link href="css/demo.css" rel="stylesheet">
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 
@@ -55,15 +55,25 @@
       <div class="starter-template" id="app">
 
         <div class="row">
+          
           <div class="col">
             <div class="input-group input-daterange">
-              <input type="text" class="form-control" v-model="nowFrom">
-              <div class="input-group-addon">to</div>
-              <input type="text" class="form-control" value="2012-04-19">
+              <input type="text" class="form-control" :value="nowFrom" @change="changeFromUTC($event)">
+              <div class="input-group-addon"> -> </div>
+              <input type="text" class="form-control" :value="nowTo" @change="changeToUTC($event)">
             </div>
           </div>
-          <div>
-
+        
+          <div class="col">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="evalscript">PROCESS</label>
+              </div>
+              <select class="custom-select" id="evalscript" @change="changeScript($event)">
+                <option value="" selected disabled>Choose</option>
+                <option v-for="item in items" :value="item.script" :key="item.script">{{ item.description }}</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -108,9 +118,12 @@
             lng: 12.47,
             nowFrom: '',
             nowTo: '',
+            fromUTC: '',
+            toUTC: '',
             zoom: 16,
             minZoom: 4, 
             maxZoom: 18,
+            selectedZoom: 0,
             instance_id: '5273b9dd-bc19-4041-93b1-7f2c2ea51dc6',
             layers: 'TRUE_COLOR',
             osm: null,
@@ -119,18 +132,17 @@
             center: null,
             locate: true,
             error: null,
+            lastImage: null,
             lastlocateCoords: null,
             wms: '',
             token: '',
-            urlImage: '',
-            dates: [],
             bbox: '',
             lat1: 0,
             lng1: 0,
             lat2: 0,
             lng2: 0,
             lastImage: null,
-            select: { script: 'CO', description: 'CARBON Monoxide' },
+            evalscript_selected: '',
             items: [
               { script: 'CO', description: 'CARBON Monoxide' },
               { script: 'NO2', description: 'Nitrogen Dioxide' },
@@ -170,7 +182,77 @@
           this.setCoordinate();
           
         },
+        watch: {
+          selectedZoom (val, oldVal) {
+            console.log('new: %s, old: %s', val, oldVal);
+            if ((val <= 5) && (!this.wms)) {
+              this.map.removeLayer(this.wms);
+            } else {
+              this.addLayerWSM()
+            }
+          }
+        },
         methods: {
+
+          async getImage () {
+
+            this.setCoordinate();
+
+            let options = {
+              token: this.token, 
+              evalscript: this.evalscript,
+              lng1: this.lng1, 
+              lat1: this.lat1, 
+              lng2: this.lng2,
+              lat2: this.lat2,
+              fromUTC: this.fromUTC,
+              toUTC: this.toUTC,
+              width: 512,
+              height: 512,
+              base64: 'true'
+            };
+
+            console.log(JSON.stringify(options));
+
+            await axios.post("/sentinel/process", options).then(blobImage => {
+                
+              if (this.lastImage) {
+                  this.map.removeLayer(this.lastImage);
+              }
+
+              this.urlImage = 'data:image/png;base64,' + blobImage.data;
+              console.log(this.urlImage + '\n' + JSON.stringify(this.bounds));
+
+              const options = {
+                opacity: 0.8,	        // The opacity of the image overlay.
+                alt: '',	            // Text for the alt attribute of the image (useful for accessibility).
+                interactive: true,    //Boolean	false	If true, the image overlay will emit mouse events when clicked or hovered.
+                crossOrigin: true,	  // Whether the crossOrigin attribute will be added to the image. If a String is provided, the image will have its crossOrigin attribute set to the String provided. This is needed if you want to access image pixel data. Refer to CORS Settings for valid String values.
+                // errorOverlayUrl	  // URL to the overlay image to show in place of the overlay that failed to load.
+                zIndex:	1	            // The explicit zIndex of the overlay layer.
+                // className	String	// A custom class name to assign to the image. Empty by default.
+              };
+
+              this.lastImage = L.imageOverlay(this.urlImage, this.map.getBounds(), options).addTo(this.map);
+
+            }).catch(error => {
+                this.error = error;
+            })
+
+            },
+
+          changeFromUTC (event) {
+            this.fromUTC = moment(event.target.value).utc();
+          },
+
+          changeToUTC (event) {
+            this.toUTC = moment(event.target.value).utc()
+          },
+
+          changeScript (event) {
+            this.evalscript_selected = event.target.value;
+            console.log(event.target.value)
+          },
 
           addLayerOSM () {
             console.log('add layer OSM ...')
@@ -189,6 +271,7 @@
           setCoordinate () {
             this.bounds = this.map.getBounds();
             this.center = this.map.getCenter();
+            this.selectedZoom = this.map.getZoom();
             this.bbox = this.bounds.toBBoxString();
             this.lat1 = this.bounds.getNorthEast().lat;
             this.lng1 = this.bounds.getNorthEast().lng;
@@ -202,10 +285,12 @@
 
           mapMoveEnd () {
             //this.getImage();
+            setCoordinate();
           },
           
           mapZoomEnd () {
             //this.getImage();
+            setCoordinate();
           },
 
           async getToken () {
@@ -235,18 +320,21 @@
           },
 
           addLayerWSM() {
-            console.log('add layer WSM ...')
-            L.tileLayer.wms(this.wms, {
-              tileSize: 512,
-                attribution: '&copy; <a href="http://www.sentinel-hub.com/" target="_blank">Sentinel Hub</a>',
-                urlProcessingApi: this.wms,
-                maxcc:20, 
-                minZoom: this.minZoom, 
-                maxZoom: this.maxZoom, 
-                preset: this.layers, 
-                layers: this.layers,
-                time: moment().utc()
-            }).addTo(this.map);
+            console.log('add layer WSM ...');
+
+            if (this.wms) {
+              this.wms = L.tileLayer.wms(this.wms, {
+                tileSize: 512,
+                  attribution: '&copy; <a href="http://www.sentinel-hub.com/" target="_blank">Sentinel Hub</a>',
+                  urlProcessingApi: this.wms,
+                  maxcc:20, 
+                  minZoom: this.minZoom, 
+                  maxZoom: this.maxZoom, 
+                  preset: this.layers, 
+                  layers: this.layers,
+                  time: moment().utc()
+              }).addTo(this.map);
+            }
           }
         }
       });
