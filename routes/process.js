@@ -5,9 +5,9 @@ const path = require('path');
 var dotenv = require('dotenv');
 dotenv.config();
 
-const fs = require('fs');
+// const fs = require('fs');
 
-var log = require('logbootstrap');
+const log = require('logbootstrap');
 
 /* GET home page. */
 router.get('/', (req, res, next) => {

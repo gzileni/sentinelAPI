@@ -18,9 +18,19 @@ router.use((req, res, next) => {
   next();
 });
 
+router.get('/wakeup', (req, res, next) => {
+  res.status(200).send("I'm awake!")
+});
+
+router.get('/wms', (req, res, next) => {
+  const instance = req.query.instanceID || process.env.INSTANCE_ID;
+  const layer_url = 'https://services.sentinel-hub.com/ogc/wms/' + instance;
+  res.status(200).send(layer_url);
+});
+
 router.post('/auth', (req, res, next) => {
 
-  sentinelhub.getToken(req.body.clientID, req.body.clientSecret, (err, token) => {
+  sentinelhub.getToken(req.body.clientID || process.env.CLIENT_ID , req.body.clientSecret || process.env.CLIENT_SECRET, (err, token) => {
     if (err != null) {
       res.status(400).send(err);
     } else {

@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Giuseppe Zileni, giuseppe.zileni@gmail.com">
+    <title>Sentinel 5P DEMO</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-datepicker.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+  </head>
+  <body>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="#">Navbar</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">
+              <a class="dropdown-item" href="#">Action</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <a class="dropdown-item" href="#">Something else here</a>
+            </div>
+          </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+          <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+        </form>
+      </div>
+    </nav>
+
+    <main role="main" class="container">
+
+      <div class="starter-template" id="app">
+
+        <div class="row">
+          <div class="col">
+            <div class="input-group input-daterange">
+              <input type="text" class="form-control" v-model="nowFrom">
+              <div class="input-group-addon">to</div>
+              <input type="text" class="form-control" value="2012-04-19">
+            </div>
+          </div>
+          <div>
+
+          </div>
+        </div>
+
+        <div class="row" id="map"></div>
+
+      </div>
+
+    </main><!-- /.container -->
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src='js/bootstrap-datepicker.min.js' type='text/javascript'></script>
+
+    <script>
+
+        // var map = new L.Map('map');
+
+        /*
+        var url = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        var attrib = 'Map data (c)OpenStreetMap contributors';
+        var osm = new L.TileLayer(url, {minZoom: 8, maxZoom: 16, attribution: attrib});
+        map.setView(new L.LatLng(41.88,12.47),16);
+        map.addLayer(osm);
+        */
+
+        // var wmsLayer = L.tileLayer.wms('https://services.sentinel-hub.com/ogc/wms/5273b9dd-bc19-4041-93b1-7f2c2ea51dc6', {
+        //    layers: 'TRUE_COLOR'
+        // }).addTo(map);
+
+        // map.setView(new L.LatLng(41.88,12.47),16);
+
+      var app = new Vue({
+        el: '#app',
+        data () {
+          return {
+            map: null,
+            lat: 41.88,
+            lng: 12.47,
+            nowFrom: '',
+            nowTo: '',
+            zoom: 16,
+            minZoom: 4, 
+            maxZoom: 18,
+            instance_id: '5273b9dd-bc19-4041-93b1-7f2c2ea51dc6',
+            layers: 'TRUE_COLOR',
+            osm: null,
+            marker: null,
+            bounds: null,
+            center: null,
+            locate: true,
+            error: null,
+            lastlocateCoords: null,
+            wms: '',
+            token: '',
+            urlImage: '',
+            dates: [],
+            bbox: '',
+            lat1: 0,
+            lng1: 0,
+            lat2: 0,
+            lng2: 0,
+            lastImage: null,
+            select: { script: 'CO', description: 'CARBON Monoxide' },
+            items: [
+              { script: 'CO', description: 'CARBON Monoxide' },
+              { script: 'NO2', description: 'Nitrogen Dioxide' },
+              { script: 'SO2', description: 'Sulfur Dioxide' },
+              { script: 'HCHO', description: 'Formaldehyde' },
+              { script: 'O3', description: 'Ozone' },
+              { script: 'AS1', description: 'UV (Ultraviolet) Aerosol Index calculated based on wavelengths of 340 nm and 380 nm' },
+              { script: 'AS2', description: 'UV (Ultraviolet) Aerosol Index calculated based on wavelengths of 354 nm and 388 nm' },
+              { script: 'CLOUD1', description: 'Cloud base height' },
+              { script: 'CLOUD2', description: 'Cloud base pressure' },
+              { script: 'CLOUD3', description: 'Cloud optical thickness' },
+              { script: 'CLOUD4', description: 'Cloud top height' },
+              { script: 'CLOUD5', description: 'Cloud top pressure' },
+              { script: 'CLOUD6', description: 'Effective radiometric cloud fraction' }
+            ]
+          }
+        },
+        mounted () {
+
+          axios.defaults.baseURL = "http://localhost:3000/api/v1";
+          this.getToken();
+
+          this.nowFrom = moment().subtract(1, 'days').format("YYYY-MM-DD");
+          this.nowTo = moment().format("YYYY-MM-DD")
+
+          this.map = new L.Map('map');
+          this.wms = 'https://services.sentinel-hub.com/ogc/wms/' + this.instance_id;
+          this.osm = this.addLayerOSM();
+          // this.getWMS();
+          this.addLayerWSM();
+
+          this.setView(this.lat, this.lng, 5);
+
+          this.map.on("click", this.mapClick);
+          this.map.on('moveend', this.mapMoveEnd);
+          this.map.on('zoomend', this.mapZoomEnd)
+          this.setCoordinate();
+          
+        },
+        methods: {
+
+          addLayerOSM () {
+            console.log('add layer OSM ...')
+            return new L.TileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+              minZoom: this.minZoom, 
+              maxZoom: this.maxZoom, 
+              attribution: "Map data (c)OpenStreetMap contributors"
+            }).addTo(this.map);
+          },
+
+          setView(lat, lng, zoom) {
+            console.log('setting view ...')
+            this.map.setView(new L.LatLng(lat, lng), zoom);
+          },
+
+          setCoordinate () {
+            this.bounds = this.map.getBounds();
+            this.center = this.map.getCenter();
+            this.bbox = this.bounds.toBBoxString();
+            this.lat1 = this.bounds.getNorthEast().lat;
+            this.lng1 = this.bounds.getNorthEast().lng;
+            this.lat2 = this.bounds.getSouthWest().lat;
+            this.lng2 = this.bounds.getSouthWest().lng;
+          },
+
+          mapClick (e) {
+            this.marker = e.latlng
+          },
+
+          mapMoveEnd () {
+            //this.getImage();
+          },
+          
+          mapZoomEnd () {
+            //this.getImage();
+          },
+
+          async getToken () {
+
+            let options = {
+              clientID: this.clientID,
+              clientSecret: this.clientSecret
+            };
+
+            await axios.post("/sentinel/auth", options).then(response => {
+              console.log(response.data);
+              this.token = response.data
+            }).catch(error => {
+              console.log('getToken -> ' +JSON.stringify(error));
+              this.error = error
+            })
+          },
+
+          async getWMS() {
+            await axios.get("/sentinel/wms?instanceID=" + this.instance_id).then(response => {
+              
+              this.addLayerWSM();
+            }).catch(error => {
+              console.log('getWMS -> ' + JSON.stringify(error));
+              this.error = error;
+            }) 
+          },
+
+          addLayerWSM() {
+            console.log('add layer WSM ...')
+            L.tileLayer.wms(this.wms, {
+              tileSize: 512,
+                attribution: '&copy; <a href="http://www.sentinel-hub.com/" target="_blank">Sentinel Hub</a>',
+                urlProcessingApi: this.wms,
+                maxcc:20, 
+                minZoom: this.minZoom, 
+                maxZoom: this.maxZoom, 
+                preset: this.layers, 
+                layers: this.layers,
+                time: moment().utc()
+            }).addTo(this.map);
+          }
+        }
+      });
+
+    </script>
+
+  </body>
+</html>
