@@ -166,7 +166,9 @@
           this.getToken();
 
           this.nowFrom = moment().subtract(1, 'days').format("YYYY-MM-DD");
-          this.nowTo = moment().format("YYYY-MM-DD")
+          this.fromUTC = moment().subtract(1, 'days').utc();
+          this.nowTo = moment().format("YYYY-MM-DD");
+          this.toUTC = moment().utc();
 
           this.map = new L.Map('map');
           this.wms = 'https://services.sentinel-hub.com/ogc/wms/' + this.instance_id;
@@ -239,7 +241,7 @@
                 this.error = error;
             })
 
-            },
+          },
 
           changeFromUTC (event) {
             this.fromUTC = moment(event.target.value).utc();
@@ -284,12 +286,12 @@
           },
 
           mapMoveEnd () {
-            //this.getImage();
+            this.getImage();
             setCoordinate();
           },
           
           mapZoomEnd () {
-            //this.getImage();
+            this.getImage();
             setCoordinate();
           },
 
