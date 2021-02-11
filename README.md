@@ -8,7 +8,7 @@ Il Server REST API utilizza il plugin [sentinelhub](https://gzileni.github.io/se
 
 Server disponibile [qui](https://sentinel5p.herokuapp.com/) con una [DEMO](https://sentinel5p.herokuapp.com/demo)
 
-Per utilizzare il server REST è disponibile su **https://sentinel5p.herokuapp.com/api/v1/**
+Il server REST è disponibile tramite indirizzo: **https://sentinel5p.herokuapp.com/api/v1/**
 
 ## INSTALLATION
 ```
@@ -51,7 +51,7 @@ $ docker run -p3000:3000 yourusername/sentinelAPI
 ## GET TOKEN
 Restituisce il Token di autorizzazione per accedere ai dati di [Sentinel HUB](https://www.sentinel-hub.com/)
 
-**POST /api/v1/auth**
+**POST https://sentinel5p.herokuapp.com/api/v1/auth**
 
 ### Esempio
 
@@ -78,7 +78,7 @@ fetch("http://localhost:3000/api/v1/auth", requestOptions)
 ## Get Image S5P
 Restituisce l'immagine del satellite Sentinel da visualizzare sul client in formato PNG
 
-**POST /api/v1/process**
+**POST https://sentinel5p.herokuapp.com/api/v1/process**
 
 ### Esempio
 ```
@@ -120,7 +120,7 @@ fetch("http://localhost:3000/api/v1/sentinel/process", requestOptions)
 ## Get EvalScript
 Restituisce lo script personalizzato per l'elaborazione dei dati satellitari
 
-**/api/v1/process?evalscript=**
+**https://sentinel5p.herokuapp.com/api/v1/process?evalscript=**
 
 ### Esempio
 ```
