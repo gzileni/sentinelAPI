@@ -3,9 +3,9 @@
 ![SENTINEL5P](https://github.com/gzileni/sentinelAPI/raw/main/public/img/sentinel5p.jpg)
 Sentinel API permette di ricevere da Sentinel HUB dati da [Sentinel-5P by ESA](http://www.tropomi.eu/data-products/level-2-products), satellite per misurare la qualità dell'aria dallo spazio.
 
-Il Server REST API utilizza il plugin [sentinelhub](https://gzileni.github.io/sentinelHUB/).
+Server disponibile [qui](https://sentinel5p.herokuapp.com/) con una [DEMO](https://sentinel5p.herokuapp.com/demo)
 
-E' disponibile una versione online qui: [https://sentinel5p.herokuapp.com/api/v1/](https://sentinel5p.herokuapp.com/api/v1/)
+Per utilizzare il server REST è disponibile su **https://sentinel5p.herokuapp.com/api/v1/**
 
 ## INSTALLATION
 ```
