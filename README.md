@@ -6,7 +6,9 @@ Sentinel API permette di ricevere da Sentinel HUB dati da [Sentinel-5P by ESA](h
 
 Il Server REST API utilizza il plugin [sentinelhub](https://gzileni.github.io/sentinelHUB/).
 
-E' disponibile una versione online qui: [https://sentinel5p.herokuapp.com/api/v1/](https://sentinel5p.herokuapp.com/api/v1/)
+Server disponibile [qui](https://sentinel5p.herokuapp.com/) con una [DEMO](https://sentinel5p.herokuapp.com/demo)
+
+Per utilizzare il server REST è disponibile su **https://sentinel5p.herokuapp.com/api/v1/**
 
 ## INSTALLATION
 ```
