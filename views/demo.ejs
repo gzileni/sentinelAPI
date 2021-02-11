@@ -9,200 +9,303 @@
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/bootstrap-datepicker.min.css" rel="stylesheet">
+    <link href="css/fontawesome/all.css" rel="stylesheet">
     <link href="css/demo.css" rel="stylesheet">
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    
+    <!-- Bootstrap Date-Picker Plugin -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
 
   </head>
   <body>
 
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-      <a class="navbar-brand" href="#">Navbar</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+    <div id="app">
+      <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="#">Navbar</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-            <div class="dropdown-menu" aria-labelledby="dropdown01">
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
-            </div>
-          </li>
-        </ul>
-        <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-          <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-        </form>
-      </div>
-    </nav>
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="https://gzileni.github.io/sentinelAPI/" target="_blank">Documentation</a>
+            </li>
+            
+            <li class="nav-item">
+              <a class="nav-link" :href="evalscript_link" target="_blank"> {{ evalscript_description }} </a>
+            </li>
 
-    <main role="main" class="container">
+            <li class="nav-item">
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#configuration">
+                <i class="fas fa-filter"></i>
+              </button>
+            </li>
 
-      <div class="starter-template" id="app">
+            <li class="nav-item">
+              
+            </li>
 
-        <div class="row">
-          
-          <div class="col">
-            <div class="input-group input-daterange">
-              <input type="text" class="form-control" :value="nowFrom" @change="changeFromUTC($event)">
-              <div class="input-group-addon"> -> </div>
-              <input type="text" class="form-control" :value="nowTo" @change="changeToUTC($event)">
-            </div>
-          </div>
-        
-          <div class="col">
-            <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <label class="input-group-text" for="evalscript">PROCESS</label>
+            <!--
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+              <div class="dropdown-menu" aria-labelledby="dropdown01">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <a class="dropdown-item" href="#">Something else here</a>
               </div>
-              <select class="custom-select" id="evalscript" @change="changeScript($event)">
-                <option value="" selected disabled>Choose</option>
-                <option v-for="item in items" :value="item.script" :key="item.script">{{ item.description }}</option>
-              </select>
+            </li>
+          </ul>
+          <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+          </form>
+          -->
+        </div>
+      </nav>
+
+      <main role="main" class="container">
+
+        <div class="starter-template">
+
+          <div class="row justify-content-md-center" style="margin-bottom: 15px;">
+
+            <div class="col col-lg-2">
+              <div class="spinner-border text-primary" role="status" v-show="spinner">
+                <span class="sr-only">Loading...</span>
+              </div>
+            </div>
+
+            <div class="col-md-auto">
+              <h2>{{ range }}</h2>
+              <h3>{{ evalscript_description }}</h3>
+              <!--
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="image_satellite" v-model="isImageSentinel" @click="toggleImage($event)">
+                <label class="custom-control-label" for="image_satellite">Toggle Satellite's image</label>
+              </div>
+              -->
+            </div>
+
+            <div class="col col-lg-2">
+              <!-- -->
+            </div>
+
+          </div>
+
+          <div class="row" id="map"></div>
+
+          <!-- Modal -->
+          <div class="modal fade" id="configuration" tabindex="-1" aria-labelledby="configurationLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="configurationLabel">Configuration</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onlick="getImage">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+
+                  <div class="row">
+
+                    <div class="input-group mb-3">
+                      <label class="control-label" for="dateFrom">From Date : </label>
+                      <input class="form-control" id="dateFrom" name="dateFrom" placeholder="From Date (DD/MM/YYYY)" type="date" v-model="fromDate" />
+                      <div class="invalid-feedback" v-if="isValidDateFrom">
+                        Date Format is invalid! 
+                      </div>
+
+
+                    </div>
+                  </div>
+
+                  <div class="row">
+
+                    <div class="input-group mb-3">
+                      <label class="control-label" for="dateTo">To Date : </label>
+                      <input class="form-control" id="dateTo" name="dateTo" placeholder="To Date (DD/MM/YYYY)" type="date" v-model="toDate" />
+                      <div class="invalid-feedback" v-if="isValidDateTo">
+                        Date Format is invalid! 
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="input-group mb-3">
+                      <div class="input-group-prepend">
+                        <label class="input-group-text" for="evalscript">PROCESS</label>
+                      </div>
+                      <select class="custom-select" id="evalscript" @change="changeScript($event)">
+                        <option :value="evalscript_selected" selected disabled>{{ evalscript_description }}</option>
+                        <option v-for="item in items" :value="item.script" :key="item.script">{{ item.description }}</option>
+                      </select>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="getImage">Confirm</button>
+                </div>
+              </div>
             </div>
           </div>
+
         </div>
 
-        <div class="row" id="map"></div>
-
-      </div>
-
-    </main><!-- /.container -->
+      </main><!-- /.container -->
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/fontawesome/all.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <script src='js/bootstrap-datepicker.min.js' type='text/javascript'></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.20/lodash.min.js"></script>
+    
     <script>
-
-        // var map = new L.Map('map');
-
-        /*
-        var url = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-        var attrib = 'Map data (c)OpenStreetMap contributors';
-        var osm = new L.TileLayer(url, {minZoom: 8, maxZoom: 16, attribution: attrib});
-        map.setView(new L.LatLng(41.88,12.47),16);
-        map.addLayer(osm);
-        */
-
-        // var wmsLayer = L.tileLayer.wms('https://services.sentinel-hub.com/ogc/wms/5273b9dd-bc19-4041-93b1-7f2c2ea51dc6', {
-        //    layers: 'TRUE_COLOR'
-        // }).addTo(map);
-
-        // map.setView(new L.LatLng(41.88,12.47),16);
 
       var app = new Vue({
         el: '#app',
         data () {
           return {
+            date1: '',
+            date2: '',
             map: null,
             lat: 41.88,
             lng: 12.47,
-            nowFrom: '',
-            nowTo: '',
-            fromUTC: '',
-            toUTC: '',
-            zoom: 16,
-            minZoom: 4, 
+            fromDate: '',
+            toDate: '',
+            minZoom: 5, 
             maxZoom: 18,
-            selectedZoom: 0,
             instance_id: '5273b9dd-bc19-4041-93b1-7f2c2ea51dc6',
             layers: 'TRUE_COLOR',
             osm: null,
             marker: null,
-            bounds: null,
-            center: null,
             locate: true,
             error: null,
             lastImage: null,
-            lastlocateCoords: null,
-            wms: '',
+            wms: null,
             token: '',
-            bbox: '',
-            lat1: 0,
-            lng1: 0,
-            lat2: 0,
-            lng2: 0,
             lastImage: null,
-            evalscript_selected: '',
+            evalscript_selected: 'CO',
+            lat1: 0,
+            lat2: 0,
+            lng1: 0,
+            lng2: 0,
+            center: 0,
+            isValidDateFrom: false,
+            isValidDateTo: false,
+            isImageSentinel: true,
+            bbox: [],
+            bounds: [],
             items: [
-              { script: 'CO', description: 'CARBON Monoxide' },
-              { script: 'NO2', description: 'Nitrogen Dioxide' },
-              { script: 'SO2', description: 'Sulfur Dioxide' },
-              { script: 'HCHO', description: 'Formaldehyde' },
-              { script: 'O3', description: 'Ozone' },
-              { script: 'AS1', description: 'UV (Ultraviolet) Aerosol Index calculated based on wavelengths of 340 nm and 380 nm' },
-              { script: 'AS2', description: 'UV (Ultraviolet) Aerosol Index calculated based on wavelengths of 354 nm and 388 nm' },
-              { script: 'CLOUD1', description: 'Cloud base height' },
-              { script: 'CLOUD2', description: 'Cloud base pressure' },
-              { script: 'CLOUD3', description: 'Cloud optical thickness' },
-              { script: 'CLOUD4', description: 'Cloud top height' },
-              { script: 'CLOUD5', description: 'Cloud top pressure' },
-              { script: 'CLOUD6', description: 'Effective radiometric cloud fraction' }
+              { script: 'CO', description: 'CARBON Monoxide', link: 'http://www.tropomi.eu/data-products/carbon-monoxide' },
+              { script: 'NO2', description: 'Nitrogen Dioxide', link: 'http://www.tropomi.eu/data-products/nitrogen-dioxide' },
+              { script: 'SO2', description: 'Sulfur Dioxide', link: 'http://www.tropomi.eu/data-products/sulphur-dioxide' },
+              { script: 'HCHO', description: 'Formaldehyde', link: 'http://www.tropomi.eu/data-products/formaldehyde' },
+              { script: 'O3', description: 'Ozone', link: 'http://www.tropomi.eu/data-products/total-ozone-column' },
+              { script: 'CH4', description: 'Methane', link: 'http://www.tropomi.eu/data-products/methane' }, 
+              { script: 'AS1', description: 'UV (Ultraviolet) Aerosol Index calculated based on wavelengths of 340 nm and 380 nm', link: 'http://www.tropomi.eu/data-products/uv-aerosol-index' }, 
+              { script: 'AS2', description: 'UV (Ultraviolet) Aerosol Index calculated based on wavelengths of 354 nm and 388 nm', link: 'http://www.tropomi.eu/data-products/uv-aerosol-index' },
+              { script: 'CLOUD1', description: 'Cloud base height', link: 'http://www.tropomi.eu/data-products/carbon-monoxide' },
+              { script: 'CLOUD2', description: 'Cloud base pressure', link: 'http://www.tropomi.eu/data-products/carbon-monoxide' },
+              { script: 'CLOUD3', description: 'Cloud optical thickness', link: 'http://www.tropomi.eu/data-products/carbon-monoxide' },
+              { script: 'CLOUD4', description: 'Cloud top height', link: 'http://www.tropomi.eu/data-products/carbon-monoxide' },
+              { script: 'CLOUD5', description: 'Cloud top pressure', link: 'http://www.tropomi.eu/data-products/carbon-monoxide' },
+              { script: 'CLOUD6', description: 'Effective radiometric cloud fraction',link: 'http://www.tropomi.eu/data-products/carbon-monoxide' }
             ]
           }
         },
-        mounted () {
+        created () {
 
           axios.defaults.baseURL = "http://localhost:3000/api/v1";
           this.getToken();
 
-          this.nowFrom = moment().subtract(1, 'days').format("YYYY-MM-DD");
-          this.fromUTC = moment().subtract(1, 'days').utc();
-          this.nowTo = moment().format("YYYY-MM-DD");
-          this.toUTC = moment().utc();
+          // this.fromDate = moment().subtract(7, 'days').format("DD/MM/YYYY");
+          // this.toDate = moment().format("DD/MM/YYYY");
 
+          this.fromDate = moment().subtract(7, 'days');
+          this.toDate = moment();
+
+        },
+        mounted () {
+          
           this.map = new L.Map('map');
-          this.wms = 'https://services.sentinel-hub.com/ogc/wms/' + this.instance_id;
+          this.setView(this.lat, this.lng, this.minZoom);
           this.osm = this.addLayerOSM();
-          // this.getWMS();
-          this.addLayerWSM();
 
-          this.setView(this.lat, this.lng, 5);
+          this.wms = 'https://services.sentinel-hub.com/ogc/wms/' + this.instance_id;
+          // this.getWMS();
+          // this.addLayerWSM();
 
           this.map.on("click", this.mapClick);
           this.map.on('moveend', this.mapMoveEnd);
-          this.map.on('zoomend', this.mapZoomEnd)
-          this.setCoordinate();
-          
+          this.map.on('zoomend', this.mapZoomEnd);
+
         },
         watch: {
-          selectedZoom (val, oldVal) {
-            console.log('new: %s, old: %s', val, oldVal);
-            if ((val <= 5) && (!this.wms)) {
-              this.map.removeLayer(this.wms);
-            } else {
-              this.addLayerWSM()
-            }
+          // .....
+          evalscipt: function (val, oldVal) {
+            this.getImage();
+          },
+          fromDate: function (val, oldVal) {
+            this.getImage();
+          },
+          fromTo: function (val, oldVal) {
+            this.getImage();
+          },
+          token: function (val, oldVal) {
+            this.getImage();
           }
+
+        },
+        computed: {
+          // .....
+          fromUTC () {
+            return moment(this.fromDate).utc()
+          },
+          toUTC () {
+            return moment(this.toDate).utc()
+          },
+          range () {
+            return ( this.fromDate != '' && this.toDate != '' ? ' from ' + this.fromUTC.format('DD/MM/YYYY') + ' to ' + this.toUTC.format('DD/MM/YYYY') : '')
+          },
+          evalscript_description () {
+            console.log(this.evalscript_selected);
+            var self = this
+            return _.find(this.items, function(o) { 
+              return o.script === self.evalscript_selected; 
+            }).description;
+          },
+
+          evalscript_link () {
+            console.log(this.evalscript_selected);
+            var self = this
+            return _.find(this.items, function(o) { 
+              return o.script === self.evalscript_selected; 
+            }).link;
+          }
+          
         },
         methods: {
 
           async getImage () {
 
+            this.spinner = true;
             this.setCoordinate();
 
             let options = {
               token: this.token, 
-              evalscript: this.evalscript,
+              evalscript: this.evalscript_selected,
               lng1: this.lng1, 
               lat1: this.lat1, 
               lng2: this.lng2,
@@ -214,7 +317,7 @@
               base64: 'true'
             };
 
-            console.log(JSON.stringify(options));
+            console.log('OPTIONS \n' + JSON.stringify(options));
 
             await axios.post("/sentinel/process", options).then(blobImage => {
                 
@@ -237,23 +340,17 @@
 
               this.lastImage = L.imageOverlay(this.urlImage, this.map.getBounds(), options).addTo(this.map);
 
+              this.spinner = false;
+
             }).catch(error => {
                 this.error = error;
             })
 
           },
 
-          changeFromUTC (event) {
-            this.fromUTC = moment(event.target.value).utc();
-          },
-
-          changeToUTC (event) {
-            this.toUTC = moment(event.target.value).utc()
-          },
-
           changeScript (event) {
             this.evalscript_selected = event.target.value;
-            console.log(event.target.value)
+            console.log(event.target.value + ' | ' + JSON.stringify(event.target));
           },
 
           addLayerOSM () {
@@ -271,14 +368,13 @@
           },
 
           setCoordinate () {
-            this.bounds = this.map.getBounds();
             this.center = this.map.getCenter();
-            this.selectedZoom = this.map.getZoom();
-            this.bbox = this.bounds.toBBoxString();
-            this.lat1 = this.bounds.getNorthEast().lat;
-            this.lng1 = this.bounds.getNorthEast().lng;
-            this.lat2 = this.bounds.getSouthWest().lat;
-            this.lng2 = this.bounds.getSouthWest().lng;
+            this.bounds = this.map.getBounds();
+            this.bbox = this.map.getBounds().toBBoxString();
+            this.lat1 = this.map.getBounds().getNorthEast().lat;
+            this.lng1 = this.map.getBounds().getNorthEast().lng;
+            this.lat2 = this.map.getBounds().getSouthWest().lat;
+            this.lng2 = this.map.getBounds().getSouthWest().lng;
           },
 
           mapClick (e) {
@@ -286,13 +382,15 @@
           },
 
           mapMoveEnd () {
+            // this.getImage();
+            this.setCoordinate();
             this.getImage();
-            setCoordinate();
           },
           
           mapZoomEnd () {
+            // this.getImage();
+            this.setCoordinate();
             this.getImage();
-            setCoordinate();
           },
 
           async getToken () {
@@ -312,13 +410,30 @@
           },
 
           async getWMS() {
+
             await axios.get("/sentinel/wms?instanceID=" + this.instance_id).then(response => {
-              
               this.addLayerWSM();
             }).catch(error => {
               console.log('getWMS -> ' + JSON.stringify(error));
               this.error = error;
             }) 
+          },
+
+          toggleImage (e) {
+            if (e.target.value) {
+              console.log('remove wms')
+              this.removeLayerWMS()
+            } else {
+              this.addLayerWSM();
+            }
+          },
+
+          removeLayerWMS() {
+
+            if (!this.wms) {
+              this.map.removeLayer(this.wms);
+              this.wms = null;
+            }
           },
 
           addLayerWSM() {
